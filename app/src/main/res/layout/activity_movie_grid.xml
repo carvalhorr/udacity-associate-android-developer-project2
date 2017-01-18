@@ -4,7 +4,6 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
     tools:context="com.example.project1.popularmoviesstage1.MainActivity">
 
     <android.support.v7.widget.RecyclerView
