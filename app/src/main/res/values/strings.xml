@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Popular Movies Stage 1</string>
+    <string name="general_error_message">An error has ocurred. Try again.</string>
 </resources>
