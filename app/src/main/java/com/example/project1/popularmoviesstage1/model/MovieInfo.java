@@ -1,21 +1,30 @@
 package com.example.project1.popularmoviesstage1.model;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by carvalhorr on 1/18/17.
  */
 
 public class MovieInfo {
 
+    @SerializedName("id")
     private String mMovieId;
-    private String mTitle;
-    private String mPosterImageURL;
 
-    public MovieInfo(){}
+    @SerializedName("title")
+    private String mTitle;
+
+    @SerializedName("poster_path")
+    private String mPosterPath;
+
+    public MovieInfo() {
+    }
 
     public MovieInfo(String movieId, String title, String posterImageURL) {
         this.mMovieId = movieId;
         this.mTitle = title;
-        this.mPosterImageURL = posterImageURL;
+        this.mPosterPath = posterImageURL;
     }
 
     public String getmMovieId() {
@@ -34,11 +43,11 @@ public class MovieInfo {
         this.mTitle = mTitle;
     }
 
-    public String getmPosterImageURL() {
-        return mPosterImageURL;
+    public String getmPosterPath() {
+        return mPosterPath;
     }
 
-    public void setmPosterImageURL(String mPosterImageURL) {
-        this.mPosterImageURL = mPosterImageURL;
+    public void setmPosterPath(String mPosterPath) {
+        this.mPosterPath = mPosterPath;
     }
 }

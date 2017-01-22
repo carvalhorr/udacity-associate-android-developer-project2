@@ -42,7 +42,7 @@ public class PopularMoviesAdapter extends RecyclerView.Adapter<PopularMoviesAdap
     @Override
     public void onBindViewHolder(PopularMoviesViewholder holder, int position) {
         MovieInfo movieInfo = mMovieInfoData.get(position);
-        holder.bind(movieInfo.getmMovieId(), movieInfo.getmPosterImageURL());
+        holder.bind(movieInfo.getmMovieId(), "http://image.tmdb.org/t/p/w780" + movieInfo.getmPosterPath());
     }
 
     @Override
