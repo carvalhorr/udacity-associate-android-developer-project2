@@ -21,6 +21,8 @@ public interface PopularMoviesAPI {
 
     public static final String TOP_RATED_MOVIES_PATH = "/3/movie/top_rated/";
 
+    public static final String BASE_POSTER_PATH = "http://image.tmdb.org/t/p/";
+
     @GET(POPULAR_MOVIES_PATH)
     public Call<MovieInfoPage> getPopularMovies(@Query("api_key") String key);
 

@@ -1,13 +1,16 @@
 package com.example.project1.popularmoviesstage1;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.example.project1.popularmoviesstage1.model.MovieInfo;
+import com.example.project1.popularmoviesstage1.network.PopularMoviesAPI;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -23,6 +26,7 @@ public class PopularMoviesAdapter extends RecyclerView.Adapter<PopularMoviesAdap
 
     public PopularMoviesAdapter(MovieOnClickHandler movieOnClickHandler) {
         this.mMovieOnClickHandler = movieOnClickHandler;
+
     }
 
     @Override
@@ -42,7 +46,7 @@ public class PopularMoviesAdapter extends RecyclerView.Adapter<PopularMoviesAdap
     @Override
     public void onBindViewHolder(PopularMoviesViewholder holder, int position) {
         MovieInfo movieInfo = mMovieInfoData.get(position);
-        holder.bind(movieInfo.getmMovieId(), "http://image.tmdb.org/t/p/w780" + movieInfo.getmPosterPath());
+        holder.bind(movieInfo);
     }
 
     @Override
@@ -60,7 +64,7 @@ public class PopularMoviesAdapter extends RecyclerView.Adapter<PopularMoviesAdap
             extends RecyclerView.ViewHolder
             implements View.OnClickListener {
 
-        private String mMovieId;
+        private MovieInfo mMovieInfo;
         private ImageView mMovieThumbnailImageView;
 
         public PopularMoviesViewholder(View itemView) {
@@ -73,19 +77,19 @@ public class PopularMoviesAdapter extends RecyclerView.Adapter<PopularMoviesAdap
         @Override
         public void onClick(View v) {
             if (mMovieOnClickHandler != null) {
-                mMovieOnClickHandler.onClick(mMovieId);
+                mMovieOnClickHandler.onClick(mMovieInfo);
             }
         }
 
-        public void bind(String movieId, String thumbnailURL) {
-            mMovieId = movieId;
+        public void bind(MovieInfo movieInfo) {
+            mMovieInfo = movieInfo;
             Picasso.with(mMovieThumbnailImageView.getContext())
-                    .load(thumbnailURL)
+                    .load(PopularMoviesAPI.BASE_POSTER_PATH + "w780" + movieInfo.getPosterPath())
                     .into(mMovieThumbnailImageView);
         }
     }
 
     public interface MovieOnClickHandler {
-        void onClick(String movieId);
+        void onClick(MovieInfo movieInfo);
     }
 }

@@ -1,5 +1,9 @@
 package com.example.project1.popularmoviesstage1;
 
+import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.PersistableBundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -10,6 +14,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -30,16 +36,17 @@ public class MainActivity
 
 
     private static final String QUERY_TYPE_PARAM = "query_type";
-
     private static final String MOVIE_DB_API_KEY = "a803f4555ef3c766306871fe297ef16a";
-
     private static final int MOVIE_DB_LOADER = 1;
 
     private PopularMoviesAdapter mPopularMoviesAdapter;
 
     private RecyclerView mMovieGridRecyclerView;
     private TextView mErrorMessageView;
+    private TextView mCurrentlyDisplayingTextView;
     private ProgressBar mLoadingIndicator;
+
+    private QueryType mSelectedQueryType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,20 +58,86 @@ public class MainActivity
 
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
         mErrorMessageView = (TextView) findViewById(R.id.tv_error_message);
+        mCurrentlyDisplayingTextView = (TextView) findViewById(R.id.tv_currently_displaying);
 
-        getSupportLoaderManager().initLoader(MOVIE_DB_LOADER, null, this);
+        if (savedInstanceState != null) {
+            System.out.println(" on restore there is saved instance");
+            if (savedInstanceState.getString(QUERY_TYPE_PARAM) != null) {
+                String savedSelectedQueryType = savedInstanceState.getString(QUERY_TYPE_PARAM);
+                switch (savedSelectedQueryType) {
+                    case "POPULAR": {
+                        mSelectedQueryType = QueryType.POPULAR;
+                        break;
+                    }
+                    case "TOP_RATED": {
+                        mSelectedQueryType = QueryType.TOP_RATED;
+                        break;
+                    }
+                }
+            }
+        } else {
+            mSelectedQueryType = QueryType.POPULAR;
+        }
 
-        startMoviesLoader(QueryType.POPULAR);
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString(QUERY_TYPE_PARAM, mSelectedQueryType.toString());
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            System.out.println(" on restore there is saved instance");
+            if (savedInstanceState.getString(QUERY_TYPE_PARAM) != null) {
+                String savedSelectedQueryType = savedInstanceState.getString(QUERY_TYPE_PARAM);
+                switch (savedSelectedQueryType) {
+                    case "POPULAR": {
+                        mSelectedQueryType = QueryType.POPULAR;
+                        break;
+                    }
+                    case "TOP_RATED": {
+                        mSelectedQueryType = QueryType.TOP_RATED;
+                        break;
+                    }
+                }
+            }
+        } else {
+            mSelectedQueryType = QueryType.POPULAR;
+        }
+
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        System.out.println("onResume " + mSelectedQueryType.toString());
+        switch (mSelectedQueryType.toString()) {
+            case "POPULAR": {
+                showPopular();
+                break;
+            }
+            case "TOP_RATED": {
+                showTopRated();
+                break;
+            }
+        }
     }
 
     private void setupMovieGridRecyclerView() {
 
-        int spanCount = 2;
+        int spanCount = getResources().getInteger(R.integer.column_count);
         MainActivity context = this;
         boolean reverseLayout = false;
 
         GridLayoutManager movieGridLayoutManager =
-                new GridLayoutManager(context, spanCount, LinearLayoutManager.VERTICAL, reverseLayout);
+                new GridLayoutManager(context, spanCount, GridLayoutManager.VERTICAL, reverseLayout);
         mMovieGridRecyclerView.setLayoutManager(movieGridLayoutManager);
 
         mPopularMoviesAdapter = new PopularMoviesAdapter(this);
@@ -72,10 +145,11 @@ public class MainActivity
     }
 
 
-
     @Override
-    public void onClick(String movieId) {
-        Toast.makeText(this, "Movie " + movieId + " clicked.", Toast.LENGTH_LONG).show();
+    public void onClick(MovieInfo movieInfo) {
+        Intent movieDetailsIntent = new Intent(this, MovieDetailsActivity.class);
+        movieDetailsIntent.putExtra(MovieDetailsActivity.MOVIE_INFO_INTENT_PARAM, movieInfo);
+        startActivity(movieDetailsIntent);
     }
 
     private void startMoviesLoader(QueryType queryType) {
@@ -84,13 +158,34 @@ public class MainActivity
         queryBundle.putString(QUERY_TYPE_PARAM, queryType.toString());
 
         LoaderManager loaderManager = getSupportLoaderManager();
-        Loader<String> githubSearchLoader = loaderManager.getLoader(MOVIE_DB_LOADER);
-        if (githubSearchLoader == null) {
+        Loader<String> movieDbLoader = loaderManager.getLoader(MOVIE_DB_LOADER);
+        if (movieDbLoader == null) {
             loaderManager.initLoader(MOVIE_DB_LOADER, queryBundle, this);
         } else {
             loaderManager.restartLoader(MOVIE_DB_LOADER, queryBundle, this);
         }
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.popular_movies_filter, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_popular_movies: {
+                showPopular();
+                return true;
+            }
+            case R.id.action_top_rated: {
+                showTopRated();
+                return true;
+            }
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -103,7 +198,7 @@ public class MainActivity
                 if (args == null) {
                     return;
                 }
-                mLoadingIndicator.setVisibility(View.VISIBLE);
+                showLoader();
                 forceLoad();
             }
 
@@ -117,13 +212,23 @@ public class MainActivity
                     switch (queryType) {
                         case "POPULAR": {
                             listMovies = controller.getPopularMovies();
+                            break;
                         }
                         case "TOP_RATED": {
                             listMovies = controller.getTopRatedMovies();
+                            break;
                         }
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
+                    Handler uiHandler = new Handler(getContext().getMainLooper());
+                    uiHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            // TODO calls to .setVisibility(VISIBLE) don't work when called from here
+                            showErrorMessage();
+                        }
+                    });
                 }
                 return listMovies;
             }
@@ -131,11 +236,42 @@ public class MainActivity
 
     }
 
+    private void showPopular() {
+        mSelectedQueryType = QueryType.POPULAR;
+        mCurrentlyDisplayingTextView.setText(getString(R.string.popular_movies_label));
+        startMoviesLoader(QueryType.POPULAR);
+    }
+
+    private void showTopRated() {
+        mSelectedQueryType = QueryType.TOP_RATED;
+        mCurrentlyDisplayingTextView.setText(getString(R.string.top_rated_movies_label));
+        startMoviesLoader(QueryType.TOP_RATED);
+    }
+
+    private void showLoader() {
+        mLoadingIndicator.setVisibility(View.VISIBLE);
+        mMovieGridRecyclerView.setVisibility(View.INVISIBLE);
+        mErrorMessageView.setVisibility(View.INVISIBLE);
+    }
+
+    private void showErrorMessage() {
+        System.out.println("SHOW ERROR MESSAGE");
+        mLoadingIndicator.setVisibility(View.INVISIBLE);
+        mMovieGridRecyclerView.setVisibility(View.INVISIBLE);
+        mErrorMessageView.setVisibility(View.VISIBLE);
+    }
+
+    private void showMoviesGrid() {
+        mLoadingIndicator.setVisibility(View.INVISIBLE);
+        mMovieGridRecyclerView.setVisibility(View.VISIBLE);
+        mErrorMessageView.setVisibility(View.INVISIBLE);
+
+    }
+
     @Override
     public void onLoadFinished(Loader<List<MovieInfo>> loader, List<MovieInfo> data) {
         mPopularMoviesAdapter.setMovieInfoData(data);
-        mLoadingIndicator.setVisibility(View.INVISIBLE);
-        mMovieGridRecyclerView.setVisibility(View.VISIBLE);
+        showMoviesGrid();
     }
 
     @Override

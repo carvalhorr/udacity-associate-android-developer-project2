@@ -57,10 +57,14 @@ public class PopularMoviesController implements Callback<MovieInfoPage> {
     }
 
     public List<MovieInfo> getPopularMovies() throws IOException {
-        MovieInfoPage movieInfoPage =
-                mPopularMoviesAPI.getPopularMovies(mTheMovieDBKey).execute().body();
-        System.out.println("total movies " + movieInfoPage.getTotalResults());
-        return movieInfoPage.getMovieInfoList();
+        Response<MovieInfoPage> response =
+                mPopularMoviesAPI.getPopularMovies(mTheMovieDBKey).execute();
+        //if (response.code() == 200) {
+            MovieInfoPage movieInfoPage = response.body();
+            return movieInfoPage.getMovieInfoList();
+        //} else {
+        //    throw new RuntimeException("Failed to load list of movies.");
+        //}
     }
 
     public void getTopRatedMoviesAsync() {

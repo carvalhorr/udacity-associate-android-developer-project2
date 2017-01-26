@@ -3,21 +3,42 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     tools:context="com.example.project1.popularmoviesstage1.MainActivity">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_movies_grid"
+
+
+    <LinearLayout
+        android:id="@+id/ll_movies_grid"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_currently_displaying"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="8dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="8dp"
+            android:textSize="20sp"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_movies_grid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/tv_error_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="22sp"
+        android:layout_gravity="center"
         android:text="@string/general_error_message"
         android:visibility="invisible"/>
+
 
     <ProgressBar
         android:id="@+id/pb_loading_indicator"
