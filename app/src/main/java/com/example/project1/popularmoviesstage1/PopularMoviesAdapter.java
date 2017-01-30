@@ -1,17 +1,21 @@
 package com.example.project1.popularmoviesstage1;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 
 import com.example.project1.popularmoviesstage1.model.MovieInfo;
 import com.example.project1.popularmoviesstage1.network.PopularMoviesAPI;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.util.List;
 
@@ -84,10 +88,12 @@ public class PopularMoviesAdapter extends RecyclerView.Adapter<PopularMoviesAdap
         public void bind(MovieInfo movieInfo) {
             mMovieInfo = movieInfo;
             Picasso.with(mMovieThumbnailImageView.getContext())
-                    .load(PopularMoviesAPI.BASE_POSTER_PATH + "w780" + movieInfo.getPosterPath())
+                    .load(PopularMoviesAPI.BASE_POSTER_PATH + "w780" + mMovieInfo.getPosterPath())
                     .into(mMovieThumbnailImageView);
         }
     }
+
+
 
     public interface MovieOnClickHandler {
         void onClick(MovieInfo movieInfo);

@@ -61,7 +61,7 @@ public class MainActivity
         mCurrentlyDisplayingTextView = (TextView) findViewById(R.id.tv_currently_displaying);
 
         if (savedInstanceState != null) {
-            System.out.println(" on restore there is saved instance");
+            System.out.println(" onCreate there is saved instance");
             if (savedInstanceState.getString(QUERY_TYPE_PARAM) != null) {
                 String savedSelectedQueryType = savedInstanceState.getString(QUERY_TYPE_PARAM);
                 switch (savedSelectedQueryType) {
@@ -79,45 +79,6 @@ public class MainActivity
             mSelectedQueryType = QueryType.POPULAR;
         }
 
-
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        outState.putString(QUERY_TYPE_PARAM, mSelectedQueryType.toString());
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-
-        if (savedInstanceState != null) {
-            System.out.println(" on restore there is saved instance");
-            if (savedInstanceState.getString(QUERY_TYPE_PARAM) != null) {
-                String savedSelectedQueryType = savedInstanceState.getString(QUERY_TYPE_PARAM);
-                switch (savedSelectedQueryType) {
-                    case "POPULAR": {
-                        mSelectedQueryType = QueryType.POPULAR;
-                        break;
-                    }
-                    case "TOP_RATED": {
-                        mSelectedQueryType = QueryType.TOP_RATED;
-                        break;
-                    }
-                }
-            }
-        } else {
-            mSelectedQueryType = QueryType.POPULAR;
-        }
-
-    }
-
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        System.out.println("onResume " + mSelectedQueryType.toString());
         switch (mSelectedQueryType.toString()) {
             case "POPULAR": {
                 showPopular();
@@ -128,10 +89,19 @@ public class MainActivity
                 break;
             }
         }
+        System.out.println("onCreate");
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString(QUERY_TYPE_PARAM, mSelectedQueryType.toString());
+        super.onSaveInstanceState(outState);
+        System.out.println("onSaveInstanceState");
+
     }
 
     private void setupMovieGridRecyclerView() {
-
         int spanCount = getResources().getInteger(R.integer.column_count);
         MainActivity context = this;
         boolean reverseLayout = false;

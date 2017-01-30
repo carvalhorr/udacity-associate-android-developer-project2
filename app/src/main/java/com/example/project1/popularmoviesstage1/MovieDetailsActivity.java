@@ -11,6 +11,7 @@ import com.example.project1.popularmoviesstage1.model.MovieInfo;
 import com.example.project1.popularmoviesstage1.network.PopularMoviesAPI;
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class MovieDetailsActivity extends AppCompatActivity {
@@ -70,8 +71,11 @@ public class MovieDetailsActivity extends AppCompatActivity {
     private void showMovieDetails() {
         if (mMovieInfo != null) {
             mMovieTitleTextView.setText(mMovieInfo.getTitle());
-            if (mMovieInfo.getReleaseDate() != null)
-                mReleaseDateTextView.setText(mMovieInfo.getReleaseDate().toString());
+            if (mMovieInfo.getReleaseDate() != null) {
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                mReleaseDateTextView.setText(dateFormat.format(mMovieInfo.getReleaseDate()));
+
+            }
             if (mMovieInfo.getVoteAverage() != null)
                 mVoteAverageTextView.setText(mMovieInfo.getVoteAverage().toString());
             Picasso.with(this).load(PopularMoviesAPI.BASE_POSTER_PATH + "w780" + mMovieInfo.getPosterPath()).into(mMoviePosterImageView);
