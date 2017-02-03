@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Popular Movies Stage 1</string>
+    <string name="app_name">Popular Movies</string>
     <string name="general_error_message">An error has ocurred. Try again.</string>
     <string name="popular_movies_label">Popular movies</string>
     <string name="top_rated_movies_label">Top rated movies</string>
