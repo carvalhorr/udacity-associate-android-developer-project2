@@ -1,12 +1,8 @@
-package com.example.project1.popularmoviesstage1;
+package com.example.popularmovies;
 
-import android.util.Log;
+import com.example.popularmovies.control.PopularMoviesController;
+import com.example.popularmovies.model.MovieInfo;
 
-import com.example.project1.popularmoviesstage1.control.PopularMoviesController;
-import com.example.project1.popularmoviesstage1.control.data.MovieInfoPage;
-import com.example.project1.popularmoviesstage1.model.MovieInfo;
-
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.List;

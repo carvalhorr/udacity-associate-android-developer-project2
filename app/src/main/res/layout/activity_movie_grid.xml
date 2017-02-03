@@ -4,7 +4,7 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context="com.example.project1.popularmoviesstage1.MainActivity">
+    tools:context="com.example.popularmovies.popularmoviesstage1.com.example.popularmovies.MainActivity">
 
 
 
