@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.popularmovies.popularmoviesstage1.R;
+import com.example.popularmovies.R;
 import com.example.popularmovies.model.MovieInfo;
 import com.example.popularmovies.network.PopularMoviesAPI;
 import com.squareup.picasso.Picasso;

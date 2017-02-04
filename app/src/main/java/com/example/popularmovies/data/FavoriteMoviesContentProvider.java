@@ -106,6 +106,13 @@ public class FavoriteMoviesContentProvider extends ContentProvider {
         int tasksDeleted = 0;
 
         switch (match) {
+            case FAVORITE_MOVIES_PATH: {
+                db.delete(
+                        FavoriteMoviesContract.FavoriteMovie.TABLE_NAME,
+                        selection,
+                        selectionArgs);
+                break;
+            }
             case FAVORITE_MOVIES_ITEM_PATH: {
                 String id = uri.getPathSegments().get(1);
                 tasksDeleted = db.delete(

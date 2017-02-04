@@ -15,7 +15,7 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.example.popularmovies.popularmoviesstage1.R;
+import com.example.popularmovies.R;
 import com.example.popularmovies.control.PopularMoviesController;
 import com.example.popularmovies.model.MovieInfo;
 

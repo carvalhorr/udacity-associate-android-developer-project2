@@ -27,12 +27,12 @@ public class FavoriteMovieDatabaseManagerTest {
     }
 
     @Test
-    public void testDatabaseCreation() {
+    public void databaseCreationTest() {
         assertEquals(1, database.getWritableDatabase().getVersion());
     }
 
     @Test
-    public void testFavoriteMovieInsertion() {
+    public void insertFavoriteMovieTest() {
 
         long id = 123;
         String title = "A movie";
@@ -44,7 +44,7 @@ public class FavoriteMovieDatabaseManagerTest {
     }
 
     @Test
-    public void testFavoriteMovieDeletion() {
+    public void deleteFavoriteMovieTest() {
         long id = 124;
         String title = "A movie";
         String poster = "poster_file_name.jpg";
@@ -59,7 +59,7 @@ public class FavoriteMovieDatabaseManagerTest {
     }
 
     @Test
-    public void testFavoriteMovieUpdate() {
+    public void updateFavoriteMovieTest() {
         long id = 125;
         database.insertFavorite(id, "title", "poster");
 

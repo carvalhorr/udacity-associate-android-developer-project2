@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.example.popularmovies.popularmoviesstage1.R;
+import com.example.popularmovies.R;
 import com.example.popularmovies.model.MovieInfo;
 import com.example.popularmovies.network.PopularMoviesAPI;
 import com.squareup.picasso.Picasso;
