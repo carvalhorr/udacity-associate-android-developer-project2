@@ -75,16 +75,12 @@ public class MainActivity
                 break;
             }
         }
-        System.out.println("onCreate");
-
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putString(QUERY_TYPE_PARAM, mSelectedQueryType);
         super.onSaveInstanceState(outState);
-        System.out.println("onSaveInstanceState");
-
     }
 
     private void setupMovieGridRecyclerView() {
