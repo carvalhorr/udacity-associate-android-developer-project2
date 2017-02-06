@@ -32,6 +32,9 @@ public class MainActivity
     private static final String MOVIE_DB_API_KEY = "a803f4555ef3c766306871fe297ef16a";
     private static final int MOVIE_DB_LOADER = 1;
 
+    public static final String POPULAR_MOVIES_QUERY_TYPE = "POPULAR";
+    public static final String TOP_RATED_QUERY_TYPE = "TOP_RATED";
+
     private PopularMoviesAdapter mPopularMoviesAdapter;
 
     private RecyclerView mMovieGridRecyclerView;
@@ -39,7 +42,8 @@ public class MainActivity
     private TextView mCurrentlyDisplayingTextView;
     private ProgressBar mLoadingIndicator;
 
-    private QueryType mSelectedQueryType;
+
+    private String mSelectedQueryType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,25 +58,14 @@ public class MainActivity
         mCurrentlyDisplayingTextView = (TextView) findViewById(R.id.tv_currently_displaying);
 
         if (savedInstanceState != null) {
-            System.out.println(" onCreate there is saved instance");
             if (savedInstanceState.getString(QUERY_TYPE_PARAM) != null) {
-                String savedSelectedQueryType = savedInstanceState.getString(QUERY_TYPE_PARAM);
-                switch (savedSelectedQueryType) {
-                    case "POPULAR": {
-                        mSelectedQueryType = QueryType.POPULAR;
-                        break;
-                    }
-                    case "TOP_RATED": {
-                        mSelectedQueryType = QueryType.TOP_RATED;
-                        break;
-                    }
-                }
+                mSelectedQueryType = savedInstanceState.getString(QUERY_TYPE_PARAM);
             }
         } else {
-            mSelectedQueryType = QueryType.POPULAR;
+            mSelectedQueryType = POPULAR_MOVIES_QUERY_TYPE;
         }
 
-        switch (mSelectedQueryType.toString()) {
+        switch (mSelectedQueryType) {
             case "POPULAR": {
                 showPopular();
                 break;
@@ -88,7 +81,7 @@ public class MainActivity
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putString(QUERY_TYPE_PARAM, mSelectedQueryType.toString());
+        outState.putString(QUERY_TYPE_PARAM, mSelectedQueryType);
         super.onSaveInstanceState(outState);
         System.out.println("onSaveInstanceState");
 
@@ -115,10 +108,10 @@ public class MainActivity
         startActivity(movieDetailsIntent);
     }
 
-    private void startMoviesLoader(QueryType queryType) {
+    private void startMoviesLoader(String queryType) {
 
         Bundle queryBundle = new Bundle();
-        queryBundle.putString(QUERY_TYPE_PARAM, queryType.toString());
+        queryBundle.putString(QUERY_TYPE_PARAM, queryType);
 
         LoaderManager loaderManager = getSupportLoaderManager();
         Loader<String> movieDbLoader = loaderManager.getLoader(MOVIE_DB_LOADER);
@@ -184,14 +177,6 @@ public class MainActivity
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
-                    Handler uiHandler = new Handler(getContext().getMainLooper());
-                    uiHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            // TODO calls to .setVisibility(VISIBLE) don't work when called from here
-                            showErrorMessage();
-                        }
-                    });
                 }
                 return listMovies;
             }
@@ -200,15 +185,15 @@ public class MainActivity
     }
 
     private void showPopular() {
-        mSelectedQueryType = QueryType.POPULAR;
+        mSelectedQueryType = POPULAR_MOVIES_QUERY_TYPE;
         mCurrentlyDisplayingTextView.setText(getString(R.string.popular_movies_label));
-        startMoviesLoader(QueryType.POPULAR);
+        startMoviesLoader(POPULAR_MOVIES_QUERY_TYPE);
     }
 
     private void showTopRated() {
-        mSelectedQueryType = QueryType.TOP_RATED;
+        mSelectedQueryType = TOP_RATED_QUERY_TYPE;
         mCurrentlyDisplayingTextView.setText(getString(R.string.top_rated_movies_label));
-        startMoviesLoader(QueryType.TOP_RATED);
+        startMoviesLoader(TOP_RATED_QUERY_TYPE);
     }
 
     private void showLoader() {
@@ -218,7 +203,6 @@ public class MainActivity
     }
 
     private void showErrorMessage() {
-        System.out.println("SHOW ERROR MESSAGE");
         mLoadingIndicator.setVisibility(View.INVISIBLE);
         mMovieGridRecyclerView.setVisibility(View.INVISIBLE);
         mErrorMessageView.setVisibility(View.VISIBLE);
@@ -233,8 +217,12 @@ public class MainActivity
 
     @Override
     public void onLoadFinished(Loader<List<MovieInfo>> loader, List<MovieInfo> data) {
-        mPopularMoviesAdapter.setMovieInfoData(data);
-        showMoviesGrid();
+        if (data == null) {
+            showErrorMessage();
+        } else {
+            mPopularMoviesAdapter.setMovieInfoData(data);
+            showMoviesGrid();
+        }
     }
 
     @Override

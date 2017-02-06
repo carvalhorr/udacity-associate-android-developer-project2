@@ -26,14 +26,14 @@ repositories {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:24.1.0'
 
+    compile 'com.android.support:appcompat-v7:24.1.0'
     compile 'com.android.support:recyclerview-v7:24.1.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
-
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
     compile 'com.google.code.gson:gson:2.6.1'
+    compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
 
     // Instrumentation dependencies use androidTestCompile
     // (as opposed to testCompile for local unit tests run in the JVM)
