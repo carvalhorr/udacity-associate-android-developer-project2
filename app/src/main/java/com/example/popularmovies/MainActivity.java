@@ -29,7 +29,7 @@ public class MainActivity
 
 
     private static final String QUERY_TYPE_PARAM = "query_type";
-    private static final String MOVIE_DB_API_KEY = "a803f4555ef3c766306871fe297ef16a";
+    public static final String MOVIE_DB_API_KEY = "a803f4555ef3c766306871fe297ef16a";
     private static final int MOVIE_DB_LOADER = 1;
 
     public static final String POPULAR_MOVIES_QUERY_TYPE = "POPULAR";
@@ -96,15 +96,21 @@ public class MainActivity
                 new GridLayoutManager(context, spanCount, GridLayoutManager.VERTICAL, reverseLayout);
         mMovieGridRecyclerView.setLayoutManager(movieGridLayoutManager);
 
-        mPopularMoviesAdapter = new PopularMoviesAdapter(this);
+        mPopularMoviesAdapter = new PopularMoviesAdapter(this, true);
         mMovieGridRecyclerView.setAdapter(mPopularMoviesAdapter);
     }
-
 
     @Override
     public void onClick(MovieInfo movieInfo) {
         Intent movieDetailsIntent = new Intent(this, MovieDetailsActivity.class);
         movieDetailsIntent.putExtra(MovieDetailsActivity.MOVIE_INFO_INTENT_PARAM, movieInfo);
+        startActivity(movieDetailsIntent);
+    }
+
+    @Override
+    public void onClick(String movieId) {
+        Intent movieDetailsIntent = new Intent(this, MovieDetailsActivity.class);
+        movieDetailsIntent.putExtra(MovieDetailsActivity.MOVIE_ID_PARAM, movieId);
         startActivity(movieDetailsIntent);
     }
 
@@ -120,7 +126,6 @@ public class MainActivity
         } else {
             loaderManager.restartLoader(MOVIE_DB_LOADER, queryBundle, this);
         }
-
     }
 
     @Override

@@ -7,6 +7,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 import retrofit2.Call;
@@ -57,11 +58,25 @@ public class PopularMoviesController implements Callback<MovieInfoPage> {
         Response<MovieInfoPage> response =
                 mPopularMoviesAPI.getPopularMovies(mTheMovieDBKey).execute();
         //if (response.code() == 200) {
-            MovieInfoPage movieInfoPage = response.body();
-            return movieInfoPage.getMovieInfoList();
+        MovieInfoPage movieInfoPage = response.body();
+        return movieInfoPage.getMovieInfoList();
         //} else {
         //    throw new RuntimeException("Failed to load list of movies.");
         //}
+    }
+
+    public MovieInfo getMovieInfo(String movieId) throws IOException {
+        Call call = mPopularMoviesAPI.getMovieInfo(movieId, mTheMovieDBKey);
+        Response<MovieInfo> r = call.execute();
+        System.out.println(call.request().url());
+        return r.body();
+        /*MovieInfo movieInfo = new MovieInfo();
+        movieInfo.setPosterPath("/WLQN5aiQG8wc9SeKwixW7pAR8K.jpg");
+        movieInfo.setMovieId("328111");
+        movieInfo.setPlot("plot plit lit");
+        movieInfo.setTitle("title");
+        movieInfo.setReleaseDate(new Date());
+        return movieInfo;*/
     }
 
     public void getTopRatedMoviesAsync() {

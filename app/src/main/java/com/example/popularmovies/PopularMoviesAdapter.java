@@ -22,9 +22,11 @@ public class PopularMoviesAdapter extends RecyclerView.Adapter<PopularMoviesAdap
 
     private List<MovieInfo> mMovieInfoData;
     private final MovieOnClickHandler mMovieOnClickHandler;
+    private boolean mFavorites;
 
-    public PopularMoviesAdapter(MovieOnClickHandler movieOnClickHandler) {
+    public PopularMoviesAdapter(MovieOnClickHandler movieOnClickHandler, boolean favorites) {
         this.mMovieOnClickHandler = movieOnClickHandler;
+        this.mFavorites = favorites;
 
     }
 
@@ -76,7 +78,11 @@ public class PopularMoviesAdapter extends RecyclerView.Adapter<PopularMoviesAdap
         @Override
         public void onClick(View v) {
             if (mMovieOnClickHandler != null) {
-                mMovieOnClickHandler.onClick(mMovieInfo);
+                if (mFavorites) {
+                    mMovieOnClickHandler.onClick(mMovieInfo.getMovieId());
+                } else {
+                    mMovieOnClickHandler.onClick(mMovieInfo);
+                }
             }
         }
 
@@ -88,9 +94,8 @@ public class PopularMoviesAdapter extends RecyclerView.Adapter<PopularMoviesAdap
         }
     }
 
-
-
     public interface MovieOnClickHandler {
         void onClick(MovieInfo movieInfo);
+        void onClick(String movieId);
     }
 }
