@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.popularmovies"
-        minSdkVersion 17
+        minSdkVersion 23
         targetSdkVersion 24
         versionCode 1
         versionName "1.0"
@@ -16,6 +16,10 @@ android {
         release {
             minifyEnabled false
         }
+    }
+
+    dataBinding {
+        enabled = true;
     }
 }
 
@@ -33,7 +37,7 @@ dependencies {
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
     compile 'com.google.code.gson:gson:2.6.1'
-    compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
+    compile 'com.android.support:design:25.1.1'
 
     // Instrumentation dependencies use androidTestCompile
     // (as opposed to testCompile for local unit tests run in the JVM)
@@ -44,4 +48,5 @@ dependencies {
 
 
     testCompile 'junit:junit:4.12'
+    compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
 }

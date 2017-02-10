@@ -7,4 +7,5 @@
     <string name="vote_average_label">Vote average:</string>
     <string name="details_activity_title">Movie details</string>
     <string name="plot_label">Plot</string>
+    <string name="movie_poster">Movie poster.</string>
 </resources>
