@@ -108,13 +108,6 @@
                         android:orientation="vertical">
 
                         <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Vote average"
-                            android:textAllCaps="true"
-                            android:textStyle="bold" />
-
-                        <TextView
                             android:id="@+id/tv_vote_average"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"

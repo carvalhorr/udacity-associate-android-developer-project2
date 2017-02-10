@@ -14,6 +14,7 @@ import com.example.popularmovies.databinding.ActivityMovieDetailsBinding;
 import com.example.popularmovies.model.MovieInfo;
 import com.example.popularmovies.network.PopularMoviesAPI;
 import com.example.popularmovies.task.FavoriteTasks;
+import com.example.popularmovies.task.MovieInfoTasks;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
@@ -21,7 +22,7 @@ import java.text.SimpleDateFormat;
 
 public class MovieDetailsActivity
         extends AppCompatActivity
-        implements LoaderManager.LoaderCallbacks<MovieInfo>, FavoriteTasks.FavoriteCallbacks {
+        implements FavoriteTasks.FavoriteCallbacks, MovieInfoTasks.MovieInfoCallbacks {
 
     public static final String MOVIE_INFO_INTENT_PARAM = "movie_info";
 
@@ -46,21 +47,12 @@ public class MovieDetailsActivity
         getMovieInfoFromIntent();
         if (mMovieInfo != null) {
             mMovieId = mMovieInfo.getMovieId();
+            movieInfoLoaded(mMovieInfo);
         } else {
             mMovieId = getIntent().getStringExtra(MOVIE_ID_PARAM);
+            showLoader();
+            MovieInfoTasks.retrieveMovieInfo(this, mMovieId, this);
         }
-        startLoader();
-    }
-
-    private void startLoader() {
-        LoaderManager loaderManager = getSupportLoaderManager();
-        Loader<String> movieDbLoader = loaderManager.getLoader(MOVIE_INFO_LOADER);
-        if (movieDbLoader == null) {
-            loaderManager.initLoader(MOVIE_INFO_LOADER, null, this);
-        } else {
-            loaderManager.restartLoader(MOVIE_INFO_LOADER, null, this);
-        }
-
     }
 
     @Override
@@ -93,7 +85,7 @@ public class MovieDetailsActivity
 
             }
             if (mMovieInfo.getVoteAverage() != null)
-                mBinding.tvVoteAverage.setText(mMovieInfo.getVoteAverage().toString());
+                mBinding.tvVoteAverage.setText(mMovieInfo.getVoteAverage().toString() + " / 10");
             Picasso.with(this).load(
                     PopularMoviesAPI.BASE_POSTER_PATH + "w780" + mMovieInfo.getPosterPath())
                     .into(mBinding.ivMovieThumbnail);
@@ -134,55 +126,6 @@ public class MovieDetailsActivity
         }
     }
 
-    @Override
-    public Loader<MovieInfo> onCreateLoader(int id, final Bundle args) {
-        return new AsyncTaskLoader<MovieInfo>(this) {
-
-            @Override
-            protected void onStartLoading() {
-                if (mMovieInfo == null) {
-                    if (mMovieId == null) {
-                        return;
-                    }
-                    showLoader();
-                    forceLoad();
-                } else {
-                    deliverResult(mMovieInfo);
-                }
-            }
-
-            @Override
-            public MovieInfo loadInBackground() {
-                String movieId = mMovieId;
-                PopularMoviesController controller = new PopularMoviesController(MainActivity.MOVIE_DB_API_KEY);
-                try {
-                    return controller.getMovieInfo(movieId);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return null;
-                }
-            }
-        };
-    }
-
-    @Override
-    public void onLoadFinished(Loader<MovieInfo> loader, MovieInfo data) {
-        if (data == null) {
-            showError();
-        } else {
-            mMovieInfo = data;
-            FavoriteTasks.isFavorite(this, mMovieInfo.getMovieId(), this);
-            hideLoader();
-            showMovieDetails();
-            setCorrectContentPadding();
-        }
-    }
-
-    @Override
-    public void onLoaderReset(Loader<MovieInfo> loader) {
-
-    }
-
     public void onFavoriteClick(View view) {
         if (isFavoriteLoaded)
             if (!isFavorite) {
@@ -209,5 +152,18 @@ public class MovieDetailsActivity
         this.isFavorite = isFavorite;
         isFavoriteLoaded = true;
         showFavorite();
+    }
+
+    @Override
+    public void movieInfoLoaded(MovieInfo movieInfo) {
+        if (movieInfo == null) {
+            showError();
+        } else {
+            mMovieInfo = movieInfo;
+            FavoriteTasks.isFavorite(this, mMovieInfo.getMovieId(), this);
+            hideLoader();
+            showMovieDetails();
+            setCorrectContentPadding();
+        }
     }
 }
