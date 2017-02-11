@@ -1,17 +1,15 @@
 package com.example.popularmovies.task;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.AsyncTask;
 
 import com.example.popularmovies.MainActivity;
 import com.example.popularmovies.control.PopularMoviesController;
-import com.example.popularmovies.data.database.FavoriteMoviesContract;
 import com.example.popularmovies.model.MovieInfo;
+import com.example.popularmovies.model.MovieVideo;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by carvalhorr on 2/9/17.
@@ -42,7 +40,32 @@ public class MovieInfoTasks {
         }.execute(movieId);
     }
 
+    public static void retrieveMovieVideos(final Context context, final String movieId, final MovieInfoCallbacks callbacks) {
+        new AsyncTask<String, Void, List<MovieVideo>>() {
+
+            @Override
+            protected List<MovieVideo> doInBackground(String... params) {
+                PopularMoviesController controller = new PopularMoviesController(MainActivity.MOVIE_DB_API_KEY);
+                try {
+                    return controller.getVideosForMovie(movieId);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+
+            @Override
+            protected void onPostExecute(List<MovieVideo> videos) {
+                super.onPostExecute(videos);
+                callbacks.movieVideosLoaded(videos);
+            }
+
+        }.execute(movieId);
+
+    }
+
     public interface MovieInfoCallbacks {
         void movieInfoLoaded(MovieInfo movieInfo);
+        void movieVideosLoaded(List<MovieVideo> videos);
     }
 }

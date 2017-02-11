@@ -17,13 +17,13 @@
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
             android:textColor="@android:color/white"
-            android:textSize="30sp"
             app:layout_constraintHorizontal_bias="0.0"
+            android:textSize="30sp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Movie title" />
+            tools:text="Movie title"
+            tools:layout_editor_absoluteY="25dp" />
 
         <View
             android:id="@+id/view"
@@ -55,13 +55,12 @@
             android:layout_height="wrap_content"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toBottomOf="@+id/view">
 
             <LinearLayout
                 android:id="@+id/ll_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="96dp"
                 android:orientation="vertical">
 
                 <LinearLayout
@@ -149,10 +148,34 @@
                     android:background="@color/colorAccent"/>
 
                 <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rv_videos"
+                    android:overScrollMode="never"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
                 </android.support.v7.widget.RecyclerView>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginStart="16dp"
+                    android:text="Reviews"
+                    android:textAllCaps="true"
+                    android:textStyle="bold" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/colorAccent"/>
+
+                <android.support.v7.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                </android.support.v7.widget.RecyclerView>
+
+                <View android:layout_width="match_parent"
+                    android:layout_height="96dp"/>
 
             </LinearLayout>
         </ScrollView>

@@ -9,7 +9,7 @@ import java.util.List;
  * Created by carvalhorr on 1/21/17.
  */
 
-public class MovieInfoPage {
+public class MovieInfoPageResponse {
 
     @SerializedName("page")
     private Integer mPageNumber;

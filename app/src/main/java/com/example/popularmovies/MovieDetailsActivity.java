@@ -2,16 +2,23 @@ package com.example.popularmovies;
 
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.popularmovies.control.PopularMoviesController;
 import com.example.popularmovies.databinding.ActivityMovieDetailsBinding;
 import com.example.popularmovies.model.MovieInfo;
+import com.example.popularmovies.model.MovieVideo;
 import com.example.popularmovies.network.PopularMoviesAPI;
 import com.example.popularmovies.task.FavoriteTasks;
 import com.example.popularmovies.task.MovieInfoTasks;
@@ -19,10 +26,11 @@ import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 public class MovieDetailsActivity
         extends AppCompatActivity
-        implements FavoriteTasks.FavoriteCallbacks, MovieInfoTasks.MovieInfoCallbacks {
+        implements FavoriteTasks.FavoriteCallbacks, MovieInfoTasks.MovieInfoCallbacks, MovieVideosAdapter.VideoOnClickHandler {
 
     public static final String MOVIE_INFO_INTENT_PARAM = "movie_info";
 
@@ -53,8 +61,20 @@ public class MovieDetailsActivity
             showLoader();
             MovieInfoTasks.retrieveMovieInfo(this, mMovieId, this);
         }
+        MovieInfoTasks.retrieveMovieVideos(this, mMovieId, this);
     }
 
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
     @Override
     protected void onResume() {
         super.onResume();
@@ -90,7 +110,6 @@ public class MovieDetailsActivity
                     PopularMoviesAPI.BASE_POSTER_PATH + "w780" + mMovieInfo.getPosterPath())
                     .into(mBinding.ivMovieThumbnail);
             mBinding.tvMoviePlot.setText(mMovieInfo.getPlot());
-            System.out.println(mMovieInfo.getMovieId());
         }
     }
 
@@ -101,7 +120,7 @@ public class MovieDetailsActivity
         mBinding.tvMovieTitle.measure(View.MeasureSpec.makeMeasureSpec(mBinding.tvMovieTitle.getWidth(), View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(1000, View.MeasureSpec.AT_MOST));
         mBinding.llContent.setPadding(
                 0,
-                mBinding.tvMovieTitle.getMeasuredHeight() + mBinding.view.getMeasuredHeight(),
+                mBinding.tvMovieTitle.getMeasuredHeight(),
                 0,
                 0);
     }
@@ -155,6 +174,11 @@ public class MovieDetailsActivity
     }
 
     @Override
+    public void favoritesLoaded(List<MovieInfo> favorites) {
+
+    }
+
+    @Override
     public void movieInfoLoaded(MovieInfo movieInfo) {
         if (movieInfo == null) {
             showError();
@@ -163,7 +187,23 @@ public class MovieDetailsActivity
             FavoriteTasks.isFavorite(this, mMovieInfo.getMovieId(), this);
             hideLoader();
             showMovieDetails();
-            setCorrectContentPadding();
+            //setCorrectContentPadding();
         }
+    }
+
+    @Override
+    public void movieVideosLoaded(List<MovieVideo> videos) {
+        MovieVideosAdapter adapter = new MovieVideosAdapter(this);
+        LinearLayoutManager movieGridLayoutManager =
+                new LinearLayoutManager(this, GridLayoutManager.HORIZONTAL, false);
+        movieGridLayoutManager.setAutoMeasureEnabled(true);
+        mBinding.rvVideos.setLayoutManager(movieGridLayoutManager);
+        mBinding.rvVideos.setAdapter(adapter);
+        adapter.setMovieInfoData(videos);
+    }
+
+    @Override
+    public void onClick(MovieVideo movieVideo) {
+        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=" + movieVideo.getKey())));
     }
 }

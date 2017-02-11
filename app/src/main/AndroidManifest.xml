@@ -20,6 +20,7 @@
         <activity
             android:name="com.example.popularmovies.MovieDetailsActivity"
             android:label="@string/details_activity_title"
+            android:theme="@style/AppTheme.WithActionBar"
             android:parentActivityName="com.example.popularmovies.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

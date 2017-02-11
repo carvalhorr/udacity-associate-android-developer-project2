@@ -1,13 +1,14 @@
 package com.example.popularmovies.control;
 
-import com.example.popularmovies.control.data.MovieInfoPage;
+import com.example.popularmovies.control.data.MovieInfoPageResponse;
+import com.example.popularmovies.control.data.MovieVideosResponse;
 import com.example.popularmovies.model.MovieInfo;
+import com.example.popularmovies.model.MovieVideo;
 import com.example.popularmovies.network.PopularMoviesAPI;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 
 import retrofit2.Call;
@@ -20,7 +21,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Created by carvalhorr on 1/21/17.
  */
 
-public class PopularMoviesController implements Callback<MovieInfoPage> {
+public class PopularMoviesController implements Callback<MovieInfoPageResponse> {
 
     private String mTheMovieDBKey;
     private PopularMoviesAPI mPopularMoviesAPI = null;
@@ -55,11 +56,11 @@ public class PopularMoviesController implements Callback<MovieInfoPage> {
     }
 
     public List<MovieInfo> getPopularMovies() throws IOException {
-        Response<MovieInfoPage> response =
+        Response<MovieInfoPageResponse> response =
                 mPopularMoviesAPI.getPopularMovies(mTheMovieDBKey).execute();
         //if (response.code() == 200) {
-        MovieInfoPage movieInfoPage = response.body();
-        return movieInfoPage.getMovieInfoList();
+        MovieInfoPageResponse movieInfoPageResponse = response.body();
+        return movieInfoPageResponse.getMovieInfoList();
         //} else {
         //    throw new RuntimeException("Failed to load list of movies.");
         //}
@@ -68,15 +69,18 @@ public class PopularMoviesController implements Callback<MovieInfoPage> {
     public MovieInfo getMovieInfo(String movieId) throws IOException {
         Call call = mPopularMoviesAPI.getMovieInfo(movieId, mTheMovieDBKey);
         Response<MovieInfo> r = call.execute();
-        System.out.println(call.request().url());
         return r.body();
-        /*MovieInfo movieInfo = new MovieInfo();
-        movieInfo.setPosterPath("/WLQN5aiQG8wc9SeKwixW7pAR8K.jpg");
-        movieInfo.setMovieId("328111");
-        movieInfo.setPlot("plot plit lit");
-        movieInfo.setTitle("title");
-        movieInfo.setReleaseDate(new Date());
-        return movieInfo;*/
+    }
+
+    public List<MovieVideo> getVideosForMovie(String movieId) throws IOException {
+        Call call = mPopularMoviesAPI.getMovieVideos(movieId, mTheMovieDBKey);
+        Response<MovieVideosResponse> r = call.execute();
+        MovieVideosResponse body = r.body();
+        if (body == null) {
+            return null;
+        } else {
+            return r.body().getVideos();
+        }
     }
 
     public void getTopRatedMoviesAsync() {
@@ -84,14 +88,14 @@ public class PopularMoviesController implements Callback<MovieInfoPage> {
     }
 
     public List<MovieInfo> getTopRatedMovies() throws IOException {
-        MovieInfoPage movieInfoPage =
+        MovieInfoPageResponse movieInfoPageResponse =
                 mPopularMoviesAPI.getTopRatedMovies(mTheMovieDBKey).execute().body();
-        return movieInfoPage.getMovieInfoList();
+        return movieInfoPageResponse.getMovieInfoList();
 
     }
 
     @Override
-    public void onResponse(Call<MovieInfoPage> call, Response<MovieInfoPage> response) {
+    public void onResponse(Call<MovieInfoPageResponse> call, Response<MovieInfoPageResponse> response) {
         if (mCallback != null) {
             if (response.code() == 200) {
                 mCallback.movieListRetrieved(response.body().getMovieInfoList());
@@ -101,7 +105,7 @@ public class PopularMoviesController implements Callback<MovieInfoPage> {
     }
 
     @Override
-    public void onFailure(Call<MovieInfoPage> call, Throwable t) {
+    public void onFailure(Call<MovieInfoPageResponse> call, Throwable t) {
         if (mCallback != null)
             mCallback.movieListRetrievalFailure();
     }

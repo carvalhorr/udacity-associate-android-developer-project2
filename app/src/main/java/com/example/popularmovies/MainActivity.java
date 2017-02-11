@@ -1,23 +1,21 @@
 package com.example.popularmovies;
 
 import android.content.Intent;
-import android.os.Handler;
+import android.os.Bundle;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.ProgressBar;
-import android.widget.TextView;
+import android.support.v7.widget.Toolbar;
 
-import com.example.popularmovies.R;
 import com.example.popularmovies.control.PopularMoviesController;
 import com.example.popularmovies.model.MovieInfo;
+import com.example.popularmovies.task.FavoriteTasks;
 
 import java.io.IOException;
 import java.util.List;
@@ -28,72 +26,51 @@ public class MainActivity
         LoaderManager.LoaderCallbacks<List<MovieInfo>> {
 
 
-    private static final String QUERY_TYPE_PARAM = "query_type";
+    private static final String LOADER_PARAM = "query_type";
     public static final String MOVIE_DB_API_KEY = "a803f4555ef3c766306871fe297ef16a";
-    private static final int MOVIE_DB_LOADER = 1;
-
-    public static final String POPULAR_MOVIES_QUERY_TYPE = "POPULAR";
-    public static final String TOP_RATED_QUERY_TYPE = "TOP_RATED";
+    private static final int POPULAR_MOVIE_LOADER = 1;
+    private static final int TOP_RATED_MOVIE_LOADER = 2;
+    private static final int FAVORITE_MOVIE_LOADER = 3;
 
     private PopularMoviesAdapter mPopularMoviesAdapter;
+    private PopularMoviesAdapter mTopRatedMoviesAdapter;
+    private PopularMoviesAdapter mFavoriteMoviesAdapter;
 
-    private RecyclerView mMovieGridRecyclerView;
-    private TextView mErrorMessageView;
-    private TextView mCurrentlyDisplayingTextView;
-    private ProgressBar mLoadingIndicator;
+    private SectionsPagerAdapter mSectionsPagerAdapter;
+    private ViewPager mViewPager;
+    private TabLayout tabLayout;
 
-
-    private String mSelectedQueryType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_movie_grid);
 
-        mMovieGridRecyclerView = (RecyclerView) findViewById(R.id.rv_movies_grid);
-        setupMovieGridRecyclerView();
+        setContentView(R.layout.movie_collections);
 
-        mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
-        mErrorMessageView = (TextView) findViewById(R.id.tv_error_message);
-        mCurrentlyDisplayingTextView = (TextView) findViewById(R.id.tv_currently_displaying);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-        if (savedInstanceState != null) {
-            if (savedInstanceState.getString(QUERY_TYPE_PARAM) != null) {
-                mSelectedQueryType = savedInstanceState.getString(QUERY_TYPE_PARAM);
-            }
-        } else {
-            mSelectedQueryType = POPULAR_MOVIES_QUERY_TYPE;
-        }
+        setupAdapters();
+        mSectionsPagerAdapter = new SectionsPagerAdapter(
+                getSupportFragmentManager(),
+                mPopularMoviesAdapter,
+                mTopRatedMoviesAdapter,
+                mFavoriteMoviesAdapter);
 
-        switch (mSelectedQueryType) {
-            case "POPULAR": {
-                showPopular();
-                break;
-            }
-            case "TOP_RATED": {
-                showTopRated();
-                break;
-            }
-        }
+        mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager.setAdapter(mSectionsPagerAdapter);
+
+        tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(mViewPager);
+        startMoviesLoader(POPULAR_MOVIE_LOADER);
+        startMoviesLoader(TOP_RATED_MOVIE_LOADER);
+        startMoviesLoader(FAVORITE_MOVIE_LOADER);
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        outState.putString(QUERY_TYPE_PARAM, mSelectedQueryType);
-        super.onSaveInstanceState(outState);
-    }
-
-    private void setupMovieGridRecyclerView() {
-        int spanCount = getResources().getInteger(R.integer.column_count);
-        MainActivity context = this;
-        boolean reverseLayout = false;
-
-        GridLayoutManager movieGridLayoutManager =
-                new GridLayoutManager(context, spanCount, GridLayoutManager.VERTICAL, reverseLayout);
-        mMovieGridRecyclerView.setLayoutManager(movieGridLayoutManager);
-
-        mPopularMoviesAdapter = new PopularMoviesAdapter(this, true);
-        mMovieGridRecyclerView.setAdapter(mPopularMoviesAdapter);
+    private void setupAdapters() {
+        mPopularMoviesAdapter = new PopularMoviesAdapter(this, false);
+        mTopRatedMoviesAdapter = new PopularMoviesAdapter(this, false);
+        mFavoriteMoviesAdapter = new PopularMoviesAdapter(this, true);
     }
 
     @Override
@@ -110,43 +87,22 @@ public class MainActivity
         startActivity(movieDetailsIntent);
     }
 
-    private void startMoviesLoader(String queryType) {
+    private void startMoviesLoader(int loader) {
 
         Bundle queryBundle = new Bundle();
-        queryBundle.putString(QUERY_TYPE_PARAM, queryType);
+        queryBundle.putInt(LOADER_PARAM, loader);
 
         LoaderManager loaderManager = getSupportLoaderManager();
-        Loader<String> movieDbLoader = loaderManager.getLoader(MOVIE_DB_LOADER);
+        Loader<String> movieDbLoader = loaderManager.getLoader(loader);
         if (movieDbLoader == null) {
-            loaderManager.initLoader(MOVIE_DB_LOADER, queryBundle, this);
+            loaderManager.initLoader(loader, queryBundle, this);
         } else {
-            loaderManager.restartLoader(MOVIE_DB_LOADER, queryBundle, this);
+            loaderManager.restartLoader(loader, queryBundle, this);
         }
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.popular_movies_filter, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_popular_movies: {
-                showPopular();
-                return true;
-            }
-            case R.id.action_top_rated: {
-                showTopRated();
-                return true;
-            }
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public Loader<List<MovieInfo>> onCreateLoader(int id, final Bundle args) {
+    public Loader<List<MovieInfo>> onCreateLoader(final int id, final Bundle args) {
 
         return new AsyncTaskLoader<List<MovieInfo>>(this) {
 
@@ -155,23 +111,47 @@ public class MainActivity
                 if (args == null) {
                     return;
                 }
-                showLoader();
-                forceLoad();
+                //showLoader();
+                if (id == FAVORITE_MOVIE_LOADER) {
+                    FavoriteTasks.loadFavorites(getContext(), new FavoriteTasks.FavoriteCallbacks() {
+                        @Override
+                        public void addedToFavorite(String movieId) {
+
+                        }
+
+                        @Override
+                        public void removedFromFavorite(String movieId) {
+
+                        }
+
+                        @Override
+                        public void isFavorite(boolean isFavorite) {
+
+                        }
+
+                        @Override
+                        public void favoritesLoaded(List<MovieInfo> favorites) {
+                            deliverResult(favorites);
+                        }
+                    });
+
+                } else {
+                    forceLoad();
+                }
             }
 
             @Override
             public List<MovieInfo> loadInBackground() {
-                String queryType = args.getString(QUERY_TYPE_PARAM);
+                int queryType = args.getInt(LOADER_PARAM);
                 PopularMoviesController controller = new PopularMoviesController(MOVIE_DB_API_KEY);
-
                 List<MovieInfo> listMovies = null;
                 try {
                     switch (queryType) {
-                        case "POPULAR": {
+                        case POPULAR_MOVIE_LOADER: {
                             listMovies = controller.getPopularMovies();
                             break;
                         }
-                        case "TOP_RATED": {
+                        case TOP_RATED_MOVIE_LOADER: {
                             listMovies = controller.getTopRatedMovies();
                             break;
                         }
@@ -185,45 +165,33 @@ public class MainActivity
 
     }
 
-    private void showPopular() {
-        mSelectedQueryType = POPULAR_MOVIES_QUERY_TYPE;
-        mCurrentlyDisplayingTextView.setText(getString(R.string.popular_movies_label));
-        startMoviesLoader(POPULAR_MOVIES_QUERY_TYPE);
-    }
-
-    private void showTopRated() {
-        mSelectedQueryType = TOP_RATED_QUERY_TYPE;
-        mCurrentlyDisplayingTextView.setText(getString(R.string.top_rated_movies_label));
-        startMoviesLoader(TOP_RATED_QUERY_TYPE);
-    }
-
-    private void showLoader() {
-        mLoadingIndicator.setVisibility(View.VISIBLE);
-        mMovieGridRecyclerView.setVisibility(View.INVISIBLE);
-        mErrorMessageView.setVisibility(View.INVISIBLE);
-    }
-
-    private void showErrorMessage() {
-        mLoadingIndicator.setVisibility(View.INVISIBLE);
-        mMovieGridRecyclerView.setVisibility(View.INVISIBLE);
-        mErrorMessageView.setVisibility(View.VISIBLE);
-    }
-
-    private void showMoviesGrid() {
-        mLoadingIndicator.setVisibility(View.INVISIBLE);
-        mMovieGridRecyclerView.setVisibility(View.VISIBLE);
-        mErrorMessageView.setVisibility(View.INVISIBLE);
-
-    }
-
     @Override
     public void onLoadFinished(Loader<List<MovieInfo>> loader, List<MovieInfo> data) {
-        if (data == null) {
-            showErrorMessage();
-        } else {
-            mPopularMoviesAdapter.setMovieInfoData(data);
-            showMoviesGrid();
+        switch (loader.getId()) {
+            case POPULAR_MOVIE_LOADER: {
+                setMovieInfoList(mPopularMoviesAdapter, data);
+                break;
+            }
+            case TOP_RATED_MOVIE_LOADER: {
+                setMovieInfoList(mTopRatedMoviesAdapter, data);
+                break;
+            }
+            case FAVORITE_MOVIE_LOADER: {
+                setMovieInfoList(mFavoriteMoviesAdapter, data);
+                break;
+            }
+
         }
+    }
+
+    private void setMovieInfoList(PopularMoviesAdapter adapter, List<MovieInfo> data) {
+        if (data == null) {
+            //showErrorMessage();
+        } else {
+            adapter.setMovieInfoData(data);
+            //showMoviesGrid();
+        }
+
     }
 
     @Override
@@ -231,3 +199,60 @@ public class MainActivity
 
     }
 }
+
+class SectionsPagerAdapter extends FragmentPagerAdapter {
+
+    private PopularMoviesAdapter mPopularMoviesAdapter;
+    private PopularMoviesAdapter mTopRatedMoviesAdapter;
+    private PopularMoviesAdapter mFavoriteMoviesAdapter;
+
+    public SectionsPagerAdapter(FragmentManager fm,
+                                PopularMoviesAdapter popularMoviesAdapter,
+                                PopularMoviesAdapter topRateMoviesAdapter,
+                                PopularMoviesAdapter favoriteMoviesAdapter) {
+        super(fm);
+        mPopularMoviesAdapter = popularMoviesAdapter;
+        mTopRatedMoviesAdapter = topRateMoviesAdapter;
+        mFavoriteMoviesAdapter = favoriteMoviesAdapter;
+    }
+
+    @Override
+    public Fragment getItem(int position) {
+        MovieGridFragment movieGridFragment = new MovieGridFragment();
+        switch (position) {
+            case 0: {
+                movieGridFragment.setPopularMovieAdapter(mPopularMoviesAdapter);
+                break;
+            }
+            case 1: {
+                movieGridFragment.setPopularMovieAdapter(mTopRatedMoviesAdapter);
+                break;
+            }
+            case 2: {
+                movieGridFragment.setPopularMovieAdapter(mFavoriteMoviesAdapter);
+                break;
+            }
+        }
+        return movieGridFragment;
+    }
+
+    @Override
+    public int getCount() {
+        // Show 3 total pages.
+        return 3;
+    }
+
+    @Override
+    public CharSequence getPageTitle(int position) {
+        switch (position) {
+            case 0:
+                return "Popular";
+            case 1:
+                return "Top rated";
+            case 2:
+                return "Favorite";
+        }
+        return null;
+    }
+}
+

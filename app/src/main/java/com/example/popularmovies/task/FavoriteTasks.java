@@ -7,8 +7,12 @@ import android.graphics.Movie;
 import android.net.Uri;
 import android.os.AsyncTask;
 
+import com.example.popularmovies.control.FavoriteController;
 import com.example.popularmovies.data.database.FavoriteMoviesContract;
 import com.example.popularmovies.model.MovieInfo;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by carvalhorr on 2/9/17.
@@ -21,17 +25,8 @@ public class FavoriteTasks {
 
             @Override
             protected Boolean doInBackground(MovieInfo... params) {
-
-                MovieInfo movieInfo = params[0];
-
-                ContentValues contentValues = new ContentValues();
-                contentValues.put(FavoriteMoviesContract.FavoriteMovie._ID, movieInfo.getMovieId());
-                contentValues.put(FavoriteMoviesContract.FavoriteMovie.COLUMN_MOVIE_TITLE, movieInfo.getTitle());
-                contentValues.put(FavoriteMoviesContract.FavoriteMovie.COLUMN_MOVIE_POSTER, movieInfo.getPosterPath());
-
-                Uri uri = context.getContentResolver().insert(
-                        FavoriteMoviesContract.FavoriteMovie.CONTENT_URI, contentValues);
-                return uri != null && uri.getLastPathSegment().equals(movieInfo.getMovieId());
+                FavoriteController controller = new FavoriteController();
+                return controller.addToFavoriteTask(context, movieInfo);
             }
 
             @Override
@@ -49,12 +44,8 @@ public class FavoriteTasks {
 
             @Override
             protected Boolean doInBackground(String... params) {
-
-                int count = context.getContentResolver().delete(
-                        FavoriteMoviesContract.FavoriteMovie.CONTENT_URI.buildUpon().appendEncodedPath(movieId).build(),
-                        null,
-                        null);
-                return count == 1;
+                FavoriteController controller = new FavoriteController();
+                return controller.removeFromFavoriteTask(context, movieId);
             }
 
             @Override
@@ -64,10 +55,6 @@ public class FavoriteTasks {
             }
 
         }.execute(movieId);
-
-
-
-
     }
 
     public static void isFavorite(final Context context, final String movieId, final FavoriteCallbacks callbacks) {
@@ -75,14 +62,8 @@ public class FavoriteTasks {
 
             @Override
             protected Boolean doInBackground(String... params) {
-
-                Cursor cursor = context.getContentResolver().query(
-                        FavoriteMoviesContract.FavoriteMovie.CONTENT_URI.buildUpon().appendPath(movieId).build(),
-                        null,
-                        null,
-                        null,
-                        null);
-                return cursor.getCount() > 0;
+                FavoriteController controller = new FavoriteController();
+                return controller.isFavorite(context, movieId);
             }
 
             @Override
@@ -92,12 +73,30 @@ public class FavoriteTasks {
             }
 
         }.execute(movieId);
+    }
 
+    public static void loadFavorites(final Context context, final FavoriteCallbacks callbacks) {
+        new AsyncTask<String, Void, List<MovieInfo>>() {
+
+            @Override
+            protected List<MovieInfo> doInBackground(String... params) {
+                FavoriteController controller = new FavoriteController();
+                return controller.getFavorites(context);
+            }
+
+            @Override
+            protected void onPostExecute(List<MovieInfo> favorites) {
+                super.onPostExecute(favorites);
+                callbacks.favoritesLoaded(favorites);
+            }
+
+        }.execute();
     }
 
     public interface FavoriteCallbacks {
         void addedToFavorite(String movieId);
         void removedFromFavorite(String movieId);
         void isFavorite(boolean isFavorite);
+        void favoritesLoaded(List<MovieInfo> favorites);
     }
 }
