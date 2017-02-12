@@ -46,7 +46,6 @@ public class MovieVideosAdapter extends RecyclerView.Adapter<MovieVideosAdapter.
 
     @Override
     public int getItemCount() {
-        System.out.println("get item count (videos)");
         if (mMovieVideos == null) return 0;
         return mMovieVideos.size();
     }
@@ -65,7 +64,7 @@ public class MovieVideosAdapter extends RecyclerView.Adapter<MovieVideosAdapter.
 
         public MovieVideosViewholder(View itemView) {
             super(itemView);
-            mNameTextView = (TextView) itemView.findViewById(R.id.section_label);
+            mNameTextView = (TextView) itemView.findViewById(R.id.tv_movie_title);
             itemView.setOnClickListener(this);
         }
 
@@ -79,7 +78,6 @@ public class MovieVideosAdapter extends RecyclerView.Adapter<MovieVideosAdapter.
         public void bind(MovieVideo movieVideo) {
             mMovieVideo = movieVideo;
             mNameTextView.setText(mMovieVideo.getName());
-            System.out.println(movieVideo.getName());
         }
     }
 

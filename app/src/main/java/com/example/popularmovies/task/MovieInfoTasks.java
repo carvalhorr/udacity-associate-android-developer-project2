@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import com.example.popularmovies.MainActivity;
 import com.example.popularmovies.control.PopularMoviesController;
 import com.example.popularmovies.model.MovieInfo;
+import com.example.popularmovies.model.MovieReview;
 import com.example.popularmovies.model.MovieVideo;
 
 import java.io.IOException;
@@ -61,11 +62,35 @@ public class MovieInfoTasks {
             }
 
         }.execute(movieId);
+    }
+
+    public static void retrieveMovieReviews(final Context context, final String movieId, final MovieInfoCallbacks callbacks) {
+        new AsyncTask<String, Void, List<MovieReview>>() {
+
+            @Override
+            protected List<MovieReview> doInBackground(String... params) {
+                PopularMoviesController controller = new PopularMoviesController(MainActivity.MOVIE_DB_API_KEY);
+                try {
+                    return controller.getReviewsForMovie(movieId);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+
+            @Override
+            protected void onPostExecute(List<MovieReview> reviews) {
+                super.onPostExecute(reviews);
+                callbacks.movieReviewsLoaded(reviews);
+            }
+
+        }.execute(movieId);
 
     }
 
     public interface MovieInfoCallbacks {
         void movieInfoLoaded(MovieInfo movieInfo);
         void movieVideosLoaded(List<MovieVideo> videos);
+        void movieReviewsLoaded(List<MovieReview> reviews);
     }
 }

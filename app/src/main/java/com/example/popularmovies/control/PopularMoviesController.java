@@ -1,8 +1,10 @@
 package com.example.popularmovies.control;
 
 import com.example.popularmovies.control.data.MovieInfoPageResponse;
+import com.example.popularmovies.control.data.MovieReviewsPageResponse;
 import com.example.popularmovies.control.data.MovieVideosResponse;
 import com.example.popularmovies.model.MovieInfo;
+import com.example.popularmovies.model.MovieReview;
 import com.example.popularmovies.model.MovieVideo;
 import com.example.popularmovies.network.PopularMoviesAPI;
 import com.google.gson.Gson;
@@ -79,7 +81,18 @@ public class PopularMoviesController implements Callback<MovieInfoPageResponse> 
         if (body == null) {
             return null;
         } else {
-            return r.body().getVideos();
+            return body.getVideos();
+        }
+    }
+
+    public List<MovieReview> getReviewsForMovie(String movieId) throws IOException {
+        Call call = mPopularMoviesAPI.getMovieReviews(movieId, mTheMovieDBKey);
+        Response<MovieReviewsPageResponse> r = call.execute();
+        MovieReviewsPageResponse body = r.body();
+        if (body == null) {
+            return null;
+        } else {
+            return body.getReviews();
         }
     }
 

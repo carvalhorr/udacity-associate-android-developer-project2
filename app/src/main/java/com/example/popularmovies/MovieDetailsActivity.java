@@ -4,33 +4,30 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.AsyncTaskLoader;
-import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
-import com.example.popularmovies.control.PopularMoviesController;
 import com.example.popularmovies.databinding.ActivityMovieDetailsBinding;
 import com.example.popularmovies.model.MovieInfo;
+import com.example.popularmovies.model.MovieReview;
 import com.example.popularmovies.model.MovieVideo;
 import com.example.popularmovies.network.PopularMoviesAPI;
 import com.example.popularmovies.task.FavoriteTasks;
 import com.example.popularmovies.task.MovieInfoTasks;
 import com.squareup.picasso.Picasso;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class MovieDetailsActivity
         extends AppCompatActivity
-        implements FavoriteTasks.FavoriteCallbacks, MovieInfoTasks.MovieInfoCallbacks, MovieVideosAdapter.VideoOnClickHandler {
+        implements FavoriteTasks.FavoriteCallbacks,
+        MovieInfoTasks.MovieInfoCallbacks,
+        MovieVideosAdapter.VideoOnClickHandler,
+        MovieReviewsAdapter.ReviewOnClickHandler {
 
     public static final String MOVIE_INFO_INTENT_PARAM = "movie_info";
 
@@ -62,6 +59,7 @@ public class MovieDetailsActivity
             MovieInfoTasks.retrieveMovieInfo(this, mMovieId, this);
         }
         MovieInfoTasks.retrieveMovieVideos(this, mMovieId, this);
+        MovieInfoTasks.retrieveMovieReviews(this, mMovieId, this);
     }
 
 
@@ -187,7 +185,6 @@ public class MovieDetailsActivity
             FavoriteTasks.isFavorite(this, mMovieInfo.getMovieId(), this);
             hideLoader();
             showMovieDetails();
-            //setCorrectContentPadding();
         }
     }
 
@@ -203,7 +200,22 @@ public class MovieDetailsActivity
     }
 
     @Override
+    public void movieReviewsLoaded(List<MovieReview> reviews) {
+        MovieReviewsAdapter adapter = new MovieReviewsAdapter(this);
+        LinearLayoutManager reviewLayoutManager =
+                new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        mBinding.rvReviews.setLayoutManager(reviewLayoutManager);
+        mBinding.rvReviews.setAdapter(adapter);
+        adapter.setMovieReviews(reviews);
+    }
+
+    @Override
     public void onClick(MovieVideo movieVideo) {
         startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=" + movieVideo.getKey())));
+    }
+
+    @Override
+    public void onClick(MovieReview movieReview) {
+        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(movieReview.getUrl())));
     }
 }

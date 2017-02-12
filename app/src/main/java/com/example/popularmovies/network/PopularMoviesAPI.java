@@ -1,6 +1,7 @@
 package com.example.popularmovies.network;
 
 import com.example.popularmovies.control.data.MovieInfoPageResponse;
+import com.example.popularmovies.control.data.MovieReviewsPageResponse;
 import com.example.popularmovies.control.data.MovieVideosResponse;
 import com.example.popularmovies.model.MovieInfo;
 
@@ -24,6 +25,8 @@ public interface PopularMoviesAPI {
 
     public static final String MOVIE_VIDEOS_PATH = "3/movie/{movieId}/videos";
 
+    public static final String MOVIE_REVIEWS_PATH = "3/movie/{movieId}/reviews";
+
     public static final String BASE_POSTER_PATH = "http://image.tmdb.org/t/p/";
 
     @GET(MOVIE_INFO_PATH)
@@ -31,6 +34,9 @@ public interface PopularMoviesAPI {
 
     @GET(MOVIE_VIDEOS_PATH)
     public Call<MovieVideosResponse> getMovieVideos(@Path("movieId") String movieId, @Query("api_key") String key);
+
+    @GET(MOVIE_REVIEWS_PATH)
+    public Call<MovieReviewsPageResponse> getMovieReviews(@Path("movieId") String movieId, @Query("api_key") String key);
 
     @GET(POPULAR_MOVIES_PATH)
     public Call<MovieInfoPageResponse> getPopularMovies(@Query("api_key") String key);
