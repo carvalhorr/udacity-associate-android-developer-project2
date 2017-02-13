@@ -27,7 +27,7 @@ public class MainActivity
 
 
     private static final String LOADER_PARAM = "query_type";
-    public static final String MOVIE_DB_API_KEY = "a803f4555ef3c766306871fe297ef16a";
+    public static final String MOVIE_DB_API_KEY = BuildConfig.API_KEY;;
     private static final int POPULAR_MOVIE_LOADER = 1;
     private static final int TOP_RATED_MOVIE_LOADER = 2;
     private static final int FAVORITE_MOVIE_LOADER = 3;
