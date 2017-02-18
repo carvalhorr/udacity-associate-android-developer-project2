@@ -27,15 +27,17 @@
         android:layout_height="wrap_content"
         android:textSize="22sp"
         android:layout_gravity="center"
+        android:gravity="center"
         android:text="@string/general_error_message"
         android:visibility="invisible"/>
 
-
     <ProgressBar
+        style="?android:attr/progressBarStyleHorizontal"
+        android:indeterminate="true"
         android:id="@+id/pb_loading_indicator"
-        android:layout_width="42dp"
-        android:layout_height="42dp"
-        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:gravity = "center_vertical|center_horizontal"
         android:visibility="invisible"/>
 
 </FrameLayout>

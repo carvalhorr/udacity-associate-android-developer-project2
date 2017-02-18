@@ -30,6 +30,8 @@ public class PopularMoviesAdapter extends RecyclerView.Adapter<PopularMoviesAdap
 
     }
 
+
+
     @Override
     public PopularMoviesViewholder onCreateViewHolder(ViewGroup parent, int viewType) {
 

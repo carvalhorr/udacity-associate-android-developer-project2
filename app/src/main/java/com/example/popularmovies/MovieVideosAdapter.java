@@ -51,7 +51,12 @@ public class MovieVideosAdapter extends RecyclerView.Adapter<MovieVideosAdapter.
     }
 
     public void setMovieInfoData(List<MovieVideo> movieVideos) {
-        this.mMovieVideos = movieVideos;
+        if (this.mMovieVideos != null) {
+            this.mMovieVideos.clear();
+            this.mMovieVideos.addAll(movieVideos);
+        } else {
+            this.mMovieVideos = movieVideos;
+        }
         notifyDataSetChanged();
     }
 
