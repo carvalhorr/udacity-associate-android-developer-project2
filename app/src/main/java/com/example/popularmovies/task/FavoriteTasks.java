@@ -1,17 +1,11 @@
 package com.example.popularmovies.task;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
-import android.graphics.Movie;
-import android.net.Uri;
 import android.os.AsyncTask;
 
 import com.example.popularmovies.control.FavoriteController;
-import com.example.popularmovies.data.database.FavoriteMoviesContract;
 import com.example.popularmovies.model.MovieInfo;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -75,7 +69,7 @@ public class FavoriteTasks {
         }.execute(movieId);
     }
 
-    public static void loadFavorites(final Context context, final FavoriteCallbacks callbacks) {
+    public static void loadFavoritesAsync(final Context context, final FavoriteCallbacks callbacks) {
         new AsyncTask<String, Void, List<MovieInfo>>() {
 
             @Override
