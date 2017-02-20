@@ -1,7 +1,12 @@
 package com.example.popularmovies;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.databinding.DataBindingUtil;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -56,6 +61,13 @@ public class MovieDetailsActivity
     // Indicate if finished loading the information if the movie is favorite from the ContentProvider
     private boolean isFavoriteLoaded = false;
 
+    private boolean mMovieInfoLoaded = false;
+    private boolean mVideosLoaded = false;
+    private boolean mReviewsLoaded = false;
+
+    private InternetConnectionBroadcastReceiver mInternetConnectivityBroadcastReceiver;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,22 +79,31 @@ public class MovieDetailsActivity
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_movie_details);
 
         // Get the movieInfo or movieId passed as parameter
+
+
+        // Show the loading indicator
+        showLoader();
+
         getMovieInfoFromIntent();
         if (mMovieInfo != null) {
 
             // If a movieInfo was received as parameter
             mMovieId = mMovieInfo.getMovieId();
-
-            // Show the info on the user interface
-            movieInfoLoaded(mMovieInfo);
         } else {
 
             // If only a movieId was passed as parameter
 
             mMovieId = getIntent().getStringExtra(MOVIE_ID_PARAM);
+        }
+        loadAndDisplayData();
+    }
 
-            // Show the loading indicator
-            showLoader();
+    private void loadAndDisplayData() {
+        if (mMovieInfo != null) {
+
+            // Show the info on the user interface
+            movieInfoLoaded(mMovieInfo);
+        } else {
 
             // Load the movieInfo asynchronously from the internet
             MovieInfoTasks.retrieveMovieInfo(this, mMovieId, this);
@@ -93,6 +114,32 @@ public class MovieDetailsActivity
 
         // Load the movie reviews asynchronously from the internet
         MovieInfoTasks.retrieveMovieReviews(this, mMovieId, this);
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        // Stop listening to changes on connectivity status change when the fragment is paused
+        unregisterReceiver(mInternetConnectivityBroadcastReceiver);
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Intent filter for internet connectivity action
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+
+        // Create new broadcast receiver
+        mInternetConnectivityBroadcastReceiver = new InternetConnectionBroadcastReceiver();
+
+        // Register the receiver to listen to changes on connectivity status
+        registerReceiver(mInternetConnectivityBroadcastReceiver, intentFilter);
+
     }
 
     @Override
@@ -131,10 +178,14 @@ public class MovieDetailsActivity
 
             Picasso.with(this)
                     .load(PopularMoviesAPI.BASE_POSTER_PATH + "w780" + mMovieInfo.getPosterPath())
+                    .placeholder(R.drawable.poster)
+                    .error(R.drawable.poster)
                     .into(mBinding.ivMovieThumbnail);
 
             Picasso.with(this)
                     .load(PopularMoviesAPI.BASE_POSTER_PATH + "w780" + mMovieInfo.getBackdropPath())
+                    .placeholder(R.drawable.backdrop)
+                    .error(R.drawable.backdrop)
                     .into(mBinding.ivBackdrop);
 
             mBinding.tvMoviePlot.setText(mMovieInfo.getPlot());
@@ -143,15 +194,20 @@ public class MovieDetailsActivity
     }
 
     private void showLoader() {
-
+        mBinding.pbLoadingIndicator.setVisibility(View.VISIBLE);
     }
 
     private void hideLoader() {
-
+        if (mMovieInfoLoaded && mVideosLoaded && mReviewsLoaded)
+            mBinding.pbLoadingIndicator.setVisibility(View.INVISIBLE);
     }
 
     private void showError() {
+        mBinding.tvErrorMessage.setVisibility(View.VISIBLE);
+    }
 
+    private void hideError() {
+        mBinding.tvErrorMessage.setVisibility(View.INVISIBLE);
     }
 
     /**
@@ -237,6 +293,8 @@ public class MovieDetailsActivity
     @Override
     public void movieInfoLoaded(MovieInfo movieInfo) {
 
+        mMovieInfoLoaded = true;
+
         if (movieInfo == null) {
 
             showError();
@@ -249,6 +307,7 @@ public class MovieDetailsActivity
             // Check if the movie is favorite
             FavoriteTasks.isFavorite(this, mMovieInfo.getMovieId(), this);
             hideLoader();
+            hideError();
 
             // Display the movie details
             showMovieDetails();
@@ -272,6 +331,9 @@ public class MovieDetailsActivity
         mBinding.rvVideos.setAdapter(adapter);
         adapter.setMovieInfoData(videos);
 
+        mVideosLoaded = true;
+        hideLoader();
+
     }
 
     /**
@@ -288,6 +350,9 @@ public class MovieDetailsActivity
         mBinding.rvReviews.setLayoutManager(reviewLayoutManager);
         mBinding.rvReviews.setAdapter(adapter);
         adapter.setMovieReviews(reviews);
+
+        mReviewsLoaded = true;
+        hideLoader();
 
     }
 
@@ -307,5 +372,41 @@ public class MovieDetailsActivity
     @Override
     public void onClick(MovieReview movieReview) {
         startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(movieReview.getUrl())));
+    }
+
+    /**
+     * Checks if the device is connected to the internet (Wifi or Mobile data)
+     * @return
+     */
+    private boolean isConnected() {
+
+        final ConnectivityManager cm = (ConnectivityManager) this
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+
+        return (netInfo != null && netInfo.isConnected());
+    }
+
+    /**
+     * Check if connected to internet and adjust the user interface accordingly.
+     */
+    private void setupConnectivity() {
+        if(isConnected()) {
+            loadAndDisplayData();
+        } else {
+            showError();
+        }
+    }
+
+
+    /**
+     * BroadcastReceiver called when connectivity status change
+     */
+    class InternetConnectionBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            setupConnectivity();
+        }
     }
 }

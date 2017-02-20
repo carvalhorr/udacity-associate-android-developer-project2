@@ -129,6 +129,8 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Popu
             mMovieInfo = movieInfo;
             Picasso.with(mMovieThumbnailImageView.getContext())
                     .load(PopularMoviesAPI.BASE_POSTER_PATH + "w780" + mMovieInfo.getPosterPath())
+                    .placeholder(R.drawable.poster)
+                    .error(R.drawable.poster)
                     .into(mMovieThumbnailImageView);
         }
     }

@@ -19,7 +19,6 @@ import static org.junit.Assert.*;
 
 public class FavoriteMovieDatabaseManagerTest {
 
-
     private static Context context = null;
     private static FavoriteMoviesDatabaseManager database = null;
 
