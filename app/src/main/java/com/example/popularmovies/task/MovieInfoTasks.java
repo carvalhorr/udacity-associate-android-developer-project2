@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import com.example.popularmovies.MainActivity;
+import com.example.popularmovies.MovieGridFragment;
 import com.example.popularmovies.control.PopularMoviesController;
 import com.example.popularmovies.model.MovieInfo;
 import com.example.popularmovies.model.MovieReview;
@@ -23,7 +24,7 @@ public class MovieInfoTasks {
 
             @Override
             protected MovieInfo doInBackground(String... params) {
-                PopularMoviesController controller = new PopularMoviesController(MainActivity.MOVIE_DB_API_KEY);
+                PopularMoviesController controller = new PopularMoviesController(MovieGridFragment.MOVIE_DB_API_KEY);
                 try {
                     return controller.getMovieInfo(movieId);
                 } catch (IOException e) {
@@ -46,7 +47,7 @@ public class MovieInfoTasks {
 
             @Override
             protected List<MovieVideo> doInBackground(String... params) {
-                PopularMoviesController controller = new PopularMoviesController(MainActivity.MOVIE_DB_API_KEY);
+                PopularMoviesController controller = new PopularMoviesController(MovieGridFragment.MOVIE_DB_API_KEY);
                 try {
                     return controller.getVideosForMovie(movieId);
                 } catch (IOException e) {
@@ -69,7 +70,7 @@ public class MovieInfoTasks {
 
             @Override
             protected List<MovieReview> doInBackground(String... params) {
-                PopularMoviesController controller = new PopularMoviesController(MainActivity.MOVIE_DB_API_KEY);
+                PopularMoviesController controller = new PopularMoviesController(MovieGridFragment.MOVIE_DB_API_KEY);
                 try {
                     return controller.getReviewsForMovie(movieId);
                 } catch (IOException e) {

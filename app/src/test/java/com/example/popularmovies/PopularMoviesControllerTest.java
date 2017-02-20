@@ -58,7 +58,7 @@ public class PopularMoviesControllerTest {
 
     @Test
     public void getPopularMoviesTest() {
-        controller = new PopularMoviesController("a803f4555ef3c766306871fe297ef16a", mCallback);
+        controller = new PopularMoviesController(MovieGridFragment.MOVIE_DB_API_KEY, mCallback);
         controller.getPopularMoviesAsync();
         // wait for the assyncronous call to finish
         while (!mCallback.isFinished()) {
