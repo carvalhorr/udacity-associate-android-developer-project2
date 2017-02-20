@@ -5,7 +5,7 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
@@ -15,14 +15,15 @@
             <ImageView
                 android:id="@+id/iv_backdrop"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="200dp"
                 android:adjustViewBounds="true"
                 android:contentDescription="@string/movie_poster"
                 android:elevation="6dp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/backdrop" />
+                app:srcCompat="@drawable/backdrop"
+                android:scaleType="centerCrop" />
 
             <View
                 android:id="@+id/view_spacer"
@@ -82,14 +83,15 @@
                     android:adjustViewBounds="true"
                     android:contentDescription="@string/movie_poster"
                     app:srcCompat="@drawable/poster"
-                    android:layout_weight="1"/>
+                    android:layout_weight="4"/>
 
                 <LinearLayout
                     android:layout_marginLeft="16dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:layout_weight="1">
+                    android:layout_weight="1"
+                    android:layout_marginRight="16dp">
 
                     <TextView
                         android:id="@+id/tv_vote_average"
@@ -113,77 +115,63 @@
                         android:textSize="24sp"
                         tools:text="19 May 2007" />
 
+                    <TextView
+                        android:id="@+id/tv_movie_plot"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:breakStrategy="simple"
+                        android:text="TextView"
+                        android:textSize="18sp"
+                        tools:text="A plot for the movie whose name is displayed up here. bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla"
+                        android:layout_marginTop="8dp"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Videos"
+                        android:textAllCaps="true"
+                        android:textStyle="bold" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/colorAccent" />
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/rv_videos"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:overScrollMode="never">
+
+                    </android.support.v7.widget.RecyclerView>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Reviews"
+                        android:textAllCaps="true"
+                        android:textStyle="bold"
+                        tools:layout_editor_absoluteY="0dp"
+                        tools:layout_editor_absoluteX="8dp" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/colorAccent"
+                        tools:layout_editor_absoluteY="0dp"
+                        tools:layout_editor_absoluteX="8dp" />
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/rv_reviews"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:layout_editor_absoluteY="0dp"
+                        tools:layout_editor_absoluteX="8dp">
+
+                    </android.support.v7.widget.RecyclerView>
+
                 </LinearLayout>
-
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/tv_movie_plot"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:breakStrategy="simple"
-                android:text="TextView"
-                android:textSize="18sp"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/ll_movie_details"
-                tools:text="A plot for the movie whose name is displayed up here. bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp" />
-
-            <LinearLayout
-                android:id="@+id/ll_content"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_movie_plot">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
-                    android:text="Videos"
-                    android:textAllCaps="true"
-                    android:textStyle="bold" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/colorAccent" />
-
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/rv_videos"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:overScrollMode="never">
-
-                </android.support.v7.widget.RecyclerView>
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
-                    android:text="Reviews"
-                    android:textAllCaps="true"
-                    android:textStyle="bold" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/colorAccent" />
-
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/rv_reviews"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                </android.support.v7.widget.RecyclerView>
 
             </LinearLayout>
         </android.support.constraint.ConstraintLayout>

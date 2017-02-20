@@ -1,4 +1,4 @@
-package com.example.popularmovies.control.data;
+package com.example.popularmovies.network.data;
 
 import com.example.popularmovies.model.MovieReview;
 import com.google.gson.annotations.SerializedName;

@@ -1,8 +1,8 @@
 package com.example.popularmovies.control;
 
-import com.example.popularmovies.control.data.MovieInfoPageResponse;
-import com.example.popularmovies.control.data.MovieReviewsPageResponse;
-import com.example.popularmovies.control.data.MovieVideosResponse;
+import com.example.popularmovies.network.data.MovieInfoPageResponse;
+import com.example.popularmovies.network.data.MovieReviewsPageResponse;
+import com.example.popularmovies.network.data.MovieVideosResponse;
 import com.example.popularmovies.model.MovieInfo;
 import com.example.popularmovies.model.MovieReview;
 import com.example.popularmovies.model.MovieVideo;
@@ -128,7 +128,7 @@ public class PopularMoviesController implements Callback<MovieInfoPageResponse> 
 
         void movieListRetrievalFailure();
 
-        // methods added to allow testing
+        // methods added to allow testing async calls
         boolean isFinished();
 
         boolean isFailure();

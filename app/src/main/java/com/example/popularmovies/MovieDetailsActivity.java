@@ -22,6 +22,12 @@ import com.squareup.picasso.Picasso;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+/**
+ * Show the details for a specific movie. The details consist of the movie title, poster, r
+ * elease date, vote average, plot, list of movies and list of reviews.
+ * <p>
+ * Created by carvalhorr
+ */
 public class MovieDetailsActivity
         extends AppCompatActivity
         implements FavoriteTasks.FavoriteCallbacks,
@@ -29,39 +35,65 @@ public class MovieDetailsActivity
         MovieVideosAdapter.VideoOnClickHandler,
         MovieReviewsAdapter.ReviewOnClickHandler {
 
+    // Name of MovieInfo parameter received from caller
     public static final String MOVIE_INFO_INTENT_PARAM = "movie_info";
 
+    // Name of movieId parameter received from caller
     public static final String MOVIE_ID_PARAM = "movie_id";
 
-    private static final int MOVIE_INFO_LOADER = 1;
-
+    // Declare data binding for the activity_movie_details.xml layout elements
     private ActivityMovieDetailsBinding mBinding;
 
+    // MovieInfo received as parameter
     private MovieInfo mMovieInfo = null;
+
+    // MovieId received as parameter
     private String mMovieId = null;
+
+    // Indicate if the movie is a favorite or not
     private boolean isFavorite = false;
+
+    // Indicate if finished loading the information if the movie is favorite from the ContentProvider
     private boolean isFavoriteLoaded = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Load activity layout
         setContentView(R.layout.activity_movie_details);
 
+        // Bind the layout views
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_movie_details);
 
+        // Get the movieInfo or movieId passed as parameter
         getMovieInfoFromIntent();
         if (mMovieInfo != null) {
+
+            // If a movieInfo was received as parameter
             mMovieId = mMovieInfo.getMovieId();
+
+            // Show the info on the user interface
             movieInfoLoaded(mMovieInfo);
         } else {
+
+            // If only a movieId was passed as parameter
+
             mMovieId = getIntent().getStringExtra(MOVIE_ID_PARAM);
+
+            // Show the loading indicator
             showLoader();
+
+            // Load the movieInfo asynchronously from the internet
             MovieInfoTasks.retrieveMovieInfo(this, mMovieId, this);
         }
+
+        // Load the movie videos asynchronously from the internet
         MovieInfoTasks.retrieveMovieVideos(this, mMovieId, this);
+
+        // Load the movie reviews asynchronously from the internet
         MovieInfoTasks.retrieveMovieReviews(this, mMovieId, this);
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -73,16 +105,8 @@ public class MovieDetailsActivity
                 return super.onOptionsItemSelected(item);
         }
     }
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-    }
-
+    // Get the movieInfo if passed as parameter
     private void getMovieInfoFromIntent() {
         Intent intent = getIntent();
         if (intent.hasExtra(MOVIE_INFO_INTENT_PARAM)) {
@@ -90,37 +114,32 @@ public class MovieDetailsActivity
         }
     }
 
-    private void getMovieInfoFromSavedBundle(Bundle savedInstanceState) {
-
-    }
-
+    // Display the movie info in the user interface
     private void showMovieDetails() {
+
         if (mMovieInfo != null) {
             mBinding.tvMovieTitle.setText(mMovieInfo.getTitle());
+
             if (mMovieInfo.getReleaseDate() != null) {
                 SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
                 mBinding.tvReleaseDate.setText(dateFormat.format(mMovieInfo.getReleaseDate()));
 
             }
+
             if (mMovieInfo.getVoteAverage() != null)
                 mBinding.tvVoteAverage.setText(mMovieInfo.getVoteAverage().toString() + " / 10");
-            Picasso.with(this).load(
-                    PopularMoviesAPI.BASE_POSTER_PATH + "w780" + mMovieInfo.getPosterPath())
+
+            Picasso.with(this)
+                    .load(PopularMoviesAPI.BASE_POSTER_PATH + "w780" + mMovieInfo.getPosterPath())
                     .into(mBinding.ivMovieThumbnail);
+
+            Picasso.with(this)
+                    .load(PopularMoviesAPI.BASE_POSTER_PATH + "w780" + mMovieInfo.getBackdropPath())
+                    .into(mBinding.ivBackdrop);
+
             mBinding.tvMoviePlot.setText(mMovieInfo.getPlot());
         }
-    }
 
-    /**
-     * Code added because the if the scrollview had any padding or margin the bottom would be cut.
-     */
-    private void setCorrectContentPadding() {
-        mBinding.tvMovieTitle.measure(View.MeasureSpec.makeMeasureSpec(mBinding.tvMovieTitle.getWidth(), View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(1000, View.MeasureSpec.AT_MOST));
-        mBinding.llContent.setPadding(
-                0,
-                mBinding.tvMovieTitle.getMeasuredHeight(),
-                0,
-                0);
     }
 
     private void showLoader() {
@@ -135,61 +154,116 @@ public class MovieDetailsActivity
 
     }
 
+    /**
+     * Show the correct icon on the favorite floating action bar based on wheather the
+     * movie is favorite or not
+     */
     private void showFavorite() {
+
         if (isFavorite) {
             mBinding.floatingActionButton.setImageResource(android.R.drawable.btn_star_big_on);
         } else {
             mBinding.floatingActionButton.setImageResource(android.R.drawable.btn_star_big_off);
         }
+
     }
 
+    /**
+     * Handle click on the favorite floating action bar
+     * @param view
+     */
     public void onFavoriteClick(View view) {
-        if (isFavoriteLoaded)
+
+        if (isFavoriteLoaded) {
             if (!isFavorite) {
                 FavoriteTasks.addToFavoriteTask(this, mMovieInfo, this);
             } else {
                 FavoriteTasks.removeFromFavoriteTask(this, mMovieInfo.getMovieId(), this);
             }
+        }
+
     }
 
+    /**
+     * Update the state of the movie to favorite when it was added to favorite
+     * @param movieId
+     */
     @Override
     public void addedToFavorite(String movieId) {
+
         isFavorite = true;
         showFavorite();
+
     }
 
+    /**
+     * Update the state of the movie no favorite when it was removed from favorites
+     * @param movieId
+     */
     @Override
     public void removedFromFavorite(String movieId) {
+
         isFavorite = false;
         showFavorite();
+
     }
 
+    /**
+     * Called from task that checks if the movie is favorite to update the info retrieved from the
+     * ContentProvider
+     *
+     * @param isFavorite
+     */
     @Override
     public void isFavorite(boolean isFavorite) {
+
         this.isFavorite = isFavorite;
         isFavoriteLoaded = true;
         showFavorite();
+
     }
 
     @Override
     public void favoritesLoaded(List<MovieInfo> favorites) {
-
+        // Not used in this class
     }
 
+    /**
+     * Called when the movieInfo was loaded from the internet or was passed as parameter
+     * from the intent caller
+     *
+     * @param movieInfo
+     */
     @Override
     public void movieInfoLoaded(MovieInfo movieInfo) {
+
         if (movieInfo == null) {
+
             showError();
+
         } else {
+
+            // Save the movieInfo information received
             mMovieInfo = movieInfo;
+
+            // Check if the movie is favorite
             FavoriteTasks.isFavorite(this, mMovieInfo.getMovieId(), this);
             hideLoader();
+
+            // Display the movie details
             showMovieDetails();
+
         }
+
     }
 
+    /**
+     * Called when task responsible for laoding the movie videos finished.
+     */
     @Override
     public void movieVideosLoaded(List<MovieVideo> videos) {
+
+        // Setup the movie videos adapter
         MovieVideosAdapter adapter = new MovieVideosAdapter(this);
         LinearLayoutManager movieGridLayoutManager =
                 new LinearLayoutManager(this, GridLayoutManager.HORIZONTAL, false);
@@ -197,23 +271,39 @@ public class MovieDetailsActivity
         mBinding.rvVideos.setLayoutManager(movieGridLayoutManager);
         mBinding.rvVideos.setAdapter(adapter);
         adapter.setMovieInfoData(videos);
+
     }
 
+    /**
+     * Called when the task responsible for loading the movie reviews finished
+     * @param reviews
+     */
     @Override
     public void movieReviewsLoaded(List<MovieReview> reviews) {
+
+        // Setup the reviews adapter
         MovieReviewsAdapter adapter = new MovieReviewsAdapter(this);
         LinearLayoutManager reviewLayoutManager =
                 new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mBinding.rvReviews.setLayoutManager(reviewLayoutManager);
         mBinding.rvReviews.setAdapter(adapter);
         adapter.setMovieReviews(reviews);
+
     }
 
+    /**
+     * Open youtube to play the video clicked
+     * @param movieVideo
+     */
     @Override
     public void onClick(MovieVideo movieVideo) {
         startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=" + movieVideo.getKey())));
     }
 
+    /**
+     * Open a review on the browser when clicked
+     * @param movieReview
+     */
     @Override
     public void onClick(MovieReview movieReview) {
         startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(movieReview.getUrl())));

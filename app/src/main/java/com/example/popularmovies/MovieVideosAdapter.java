@@ -12,16 +12,23 @@ import com.example.popularmovies.model.MovieVideo;
 import java.util.List;
 
 /**
+ * Adapter for displaying a list of videos for a movie
  * Created by carvalhorr on 1/18/17.
  */
 
 public class MovieVideosAdapter extends RecyclerView.Adapter<MovieVideosAdapter.MovieVideosViewholder> {
 
+    // holds the list of videos
     private List<MovieVideo> mMovieVideos;
+
+    // External video click handler
     private final VideoOnClickHandler mVideoOnClickHandler;
 
     public MovieVideosAdapter(VideoOnClickHandler videoOnClickHandler) {
+
+        // Stores the external video click handler
         this.mVideoOnClickHandler = videoOnClickHandler;
+
     }
 
     @Override
@@ -36,56 +43,85 @@ public class MovieVideosAdapter extends RecyclerView.Adapter<MovieVideosAdapter.
         MovieVideosViewholder movieVideosViewholder = new MovieVideosViewholder(view);
 
         return movieVideosViewholder;
+
     }
 
     @Override
     public void onBindViewHolder(MovieVideosViewholder holder, int position) {
+
         MovieVideo movieVideo = mMovieVideos.get(position);
         holder.bind(movieVideo);
+
     }
 
     @Override
     public int getItemCount() {
+
         if (mMovieVideos == null) return 0;
         return mMovieVideos.size();
+
     }
 
+    /**
+     * Used by external loader to pass list of videos to the Adapter when load is finished
+     *
+     * @param movieVideos
+     */
     public void setMovieInfoData(List<MovieVideo> movieVideos) {
-        if (this.mMovieVideos != null) {
-            this.mMovieVideos.clear();
-            this.mMovieVideos.addAll(movieVideos);
-        } else {
-            this.mMovieVideos = movieVideos;
-        }
+
+        this.mMovieVideos = movieVideos;
         notifyDataSetChanged();
+
     }
 
     public class MovieVideosViewholder
             extends RecyclerView.ViewHolder
             implements View.OnClickListener {
 
+        // Declare variables for view elements
         private MovieVideo mMovieVideo;
         private TextView mNameTextView;
 
         public MovieVideosViewholder(View itemView) {
+
             super(itemView);
+
+            // Get reference to the view elements
             mNameTextView = (TextView) itemView.findViewById(R.id.tv_movie_title);
+
+            // Setup the review view click handler
             itemView.setOnClickListener(this);
+
         }
 
+        /**
+         * Call external video click handler when a video is clicked
+         * @param v
+         */
         @Override
         public void onClick(View v) {
+
             if (mVideoOnClickHandler != null) {
                 mVideoOnClickHandler.onClick(mMovieVideo);
             }
+
         }
 
+        /**
+         * Store and display the video info received
+         * @param movieVideo
+         */
         public void bind(MovieVideo movieVideo) {
+
             mMovieVideo = movieVideo;
             mNameTextView.setText(mMovieVideo.getName());
+
         }
     }
 
+    /**
+     * Interface that external components need to implement to handle a click on a video
+     */
     public interface VideoOnClickHandler {
         void onClick(MovieVideo movieVideo);
     }

@@ -5,9 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
-import com.example.popularmovies.data.database.FavoriteMoviesContract;
+import com.example.popularmovies.database.FavoriteMoviesContract;
 import com.example.popularmovies.model.MovieInfo;
-import com.example.popularmovies.task.FavoriteTasks;
 
 import java.util.ArrayList;
 import java.util.List;

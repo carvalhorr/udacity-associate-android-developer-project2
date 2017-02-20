@@ -29,7 +29,7 @@
         </activity>
 
         <provider
-            android:name=".data.FavoriteMoviesContentProvider"
+            android:name=".database.provider.FavoriteMoviesContentProvider"
             android:authorities="com.example.popularmovies"
             android:exported="false"/>
     </application>

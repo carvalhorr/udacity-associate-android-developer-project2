@@ -1,4 +1,4 @@
-package com.example.popularmovies.data;
+package com.example.popularmovies.database.provider;
 
 import android.content.ContentProvider;
 import android.content.ContentUris;
@@ -9,8 +9,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
-import com.example.popularmovies.data.database.FavoriteMoviesContract;
-import com.example.popularmovies.data.database.FavoriteMoviesDatabaseManager;
+import com.example.popularmovies.database.FavoriteMoviesContract;
+import com.example.popularmovies.database.FavoriteMoviesDatabaseManager;
 
 /**
  * Created by carvalhorr on 2/3/17.

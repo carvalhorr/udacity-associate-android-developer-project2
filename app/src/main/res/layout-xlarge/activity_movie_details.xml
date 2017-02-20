@@ -5,7 +5,7 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
@@ -22,7 +22,8 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/backdrop" />
+                app:srcCompat="@drawable/backdrop"
+                android:scaleType="centerCrop" />
 
             <View
                 android:id="@+id/view_spacer"
@@ -89,7 +90,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:layout_weight="1">
+                    android:layout_weight="1"
+                    android:layout_marginRight="16dp">
 
                     <TextView
                         android:id="@+id/tv_vote_average"
@@ -113,34 +115,28 @@
                         android:textSize="24sp"
                         tools:text="19 May 2007" />
 
+                    <TextView
+                        android:id="@+id/tv_movie_plot"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:breakStrategy="simple"
+                        android:text="TextView"
+                        android:textSize="18sp"
+                        tools:text="A plot for the movie whose name is displayed up here. bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla"
+                        android:layout_marginTop="8dp"/>
+
                 </LinearLayout>
 
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/tv_movie_plot"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:breakStrategy="simple"
-                android:text="TextView"
-                android:textSize="18sp"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/ll_movie_details"
-                tools:text="A plot for the movie whose name is displayed up here. bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp" />
-
             <LinearLayout
                 android:id="@+id/ll_content"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_movie_plot">
+                app:layout_constraintTop_toBottomOf="@+id/ll_movie_details">
 
                 <TextView
                     android:layout_width="match_parent"

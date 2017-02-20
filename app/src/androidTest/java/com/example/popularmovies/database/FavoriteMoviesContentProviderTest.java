@@ -1,4 +1,4 @@
-package com.example.popularmovies.data;
+package com.example.popularmovies.database;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -6,8 +6,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.test.InstrumentationRegistry;
-
-import com.example.popularmovies.data.database.FavoriteMoviesContract;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;

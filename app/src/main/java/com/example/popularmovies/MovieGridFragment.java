@@ -30,7 +30,6 @@ import java.util.List;
 /**
  * Created by carvalhorr on 2/11/17.
  */
-
 public class MovieGridFragment
         extends Fragment
         implements LoaderManager.LoaderCallbacks<List<MovieInfo>> {
@@ -41,7 +40,7 @@ public class MovieGridFragment
     private ProgressBar mLoadingIndicator;
 
     // Declaration of list of movies adapter
-    private PopularMoviesAdapter mPopularMoviesAdapter;
+    private MovieListAdapter mMovieListAdapter;
 
     // Constants for the different loaders
     public static final int POPULAR_MOVIE_LOADER = 1;
@@ -58,7 +57,7 @@ public class MovieGridFragment
     public static final String MOVIE_DB_API_KEY = BuildConfig.API_KEY;
 
     // Class responsible to handle click on a movie item. The activity where the fragment is located must implement MovieOnClickHandler
-    private PopularMoviesAdapter.MovieOnClickHandler mMovieOnClickHandler;
+    private MovieListAdapter.MovieOnClickHandler mMovieOnClickHandler;
 
     private InternetConnectionBroadcastReceiver mInternetConnectivityBroadcastReceiver;
 
@@ -81,8 +80,8 @@ public class MovieGridFragment
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Bundle bundle = getArguments();
-        if (getActivity() instanceof PopularMoviesAdapter.MovieOnClickHandler) {
-            mMovieOnClickHandler = (PopularMoviesAdapter.MovieOnClickHandler) getActivity();
+        if (getActivity() instanceof MovieListAdapter.MovieOnClickHandler) {
+            mMovieOnClickHandler = (MovieListAdapter.MovieOnClickHandler) getActivity();
         }
         if (bundle != null && bundle.containsKey(PARAM_QUERY_TYPE)) {
             mQueryType = bundle.getInt(PARAM_QUERY_TYPE);
@@ -124,10 +123,10 @@ public class MovieGridFragment
                 new GridLayoutManager(getContext(), spanCount, GridLayoutManager.VERTICAL, reverseLayout);
         mMovieGridRecyclerView.setLayoutManager(movieGridLayoutManager);
 
-        mPopularMoviesAdapter = new PopularMoviesAdapter(mMovieOnClickHandler, mQueryType == FAVORITE_MOVIE_LOADER);
+        mMovieListAdapter = new MovieListAdapter(mMovieOnClickHandler, mQueryType == FAVORITE_MOVIE_LOADER);
 
 
-        mMovieGridRecyclerView.setAdapter(mPopularMoviesAdapter);
+        mMovieGridRecyclerView.setAdapter(mMovieListAdapter);
     }
 
     @Override
@@ -175,7 +174,7 @@ public class MovieGridFragment
         if (data == null) {
             showError();
         } else {
-            mPopularMoviesAdapter.setMovieInfoData(data);
+            mMovieListAdapter.setMovieInfoData(data);
             showData();
         }
     }
@@ -260,7 +259,7 @@ public class MovieGridFragment
     }
 
     /**
-     * BraodcastReceiver called when connectivity status change
+     * BroadcastReceiver called when connectivity status change
      */
     class InternetConnectionBroadcastReceiver extends BroadcastReceiver {
         @Override

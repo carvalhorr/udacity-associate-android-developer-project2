@@ -1,8 +1,8 @@
 package com.example.popularmovies.network;
 
-import com.example.popularmovies.control.data.MovieInfoPageResponse;
-import com.example.popularmovies.control.data.MovieReviewsPageResponse;
-import com.example.popularmovies.control.data.MovieVideosResponse;
+import com.example.popularmovies.network.data.MovieInfoPageResponse;
+import com.example.popularmovies.network.data.MovieReviewsPageResponse;
+import com.example.popularmovies.network.data.MovieVideosResponse;
 import com.example.popularmovies.model.MovieInfo;
 
 import retrofit2.Call;
