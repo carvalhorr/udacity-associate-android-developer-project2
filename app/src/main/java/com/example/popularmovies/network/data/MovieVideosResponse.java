@@ -6,13 +6,18 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 /**
+ * Response returned from call to the get video list endpoint from the movie db.
+ *
  * Created by carvalhorr on 2/11/17.
  */
 
 public class MovieVideosResponse {
+
+    // Movie id
     @SerializedName("id")
     private String id;
 
+    // List of videos
     @SerializedName("results")
     private List<MovieVideo> videos;
 
