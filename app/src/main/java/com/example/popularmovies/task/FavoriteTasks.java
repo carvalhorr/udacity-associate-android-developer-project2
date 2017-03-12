@@ -32,7 +32,7 @@ public class FavoriteTasks {
             protected Boolean doInBackground(MovieInfo... params) {
                 // Call the controller method to add the movie to favorites
                 FavoriteController controller = new FavoriteController();
-                return controller.addToFavoriteTask(context, movieInfo);
+                return controller.addToFavorite(context, movieInfo);
             }
 
             @Override
@@ -61,7 +61,7 @@ public class FavoriteTasks {
             protected Boolean doInBackground(String... params) {
                 // Call the controller to remove the movie from favorites
                 FavoriteController controller = new FavoriteController();
-                return controller.removeFromFavoriteTask(context, movieId);
+                return controller.removeFromFavorite(context, movieId);
             }
 
             @Override

@@ -60,12 +60,8 @@ public class PopularMoviesController implements Callback<MovieInfoPageResponse> 
     public List<MovieInfo> getPopularMovies() throws IOException {
         Response<MovieInfoPageResponse> response =
                 mPopularMoviesAPI.getPopularMovies(mTheMovieDBKey).execute();
-        //if (response.code() == 200) {
         MovieInfoPageResponse movieInfoPageResponse = response.body();
         return movieInfoPageResponse.getMovieInfoList();
-        //} else {
-        //    throw new RuntimeException("Failed to load list of movies.");
-        //}
     }
 
     public MovieInfo getMovieInfo(String movieId) throws IOException {

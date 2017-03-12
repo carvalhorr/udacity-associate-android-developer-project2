@@ -12,12 +12,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Control for adding/removing movies to favorite in the local database
+ *
  * Created by carvalhorr on 2/11/17.
  */
 
 public class FavoriteController {
 
-    public Boolean addToFavoriteTask(Context context, MovieInfo movieInfo) {
+
+    public Boolean addToFavorite(Context context, MovieInfo movieInfo) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(FavoriteMoviesContract.FavoriteMovie._ID, movieInfo.getMovieId());
         contentValues.put(FavoriteMoviesContract.FavoriteMovie.COLUMN_MOVIE_TITLE, movieInfo.getTitle());
@@ -28,7 +31,7 @@ public class FavoriteController {
         return uri != null && uri.getLastPathSegment().equals(movieInfo.getMovieId());
     }
 
-    public Boolean removeFromFavoriteTask(Context context, String movieId) {
+    public Boolean removeFromFavorite(Context context, String movieId) {
         int count = context.getContentResolver().delete(
                 FavoriteMoviesContract.FavoriteMovie.CONTENT_URI.buildUpon().appendEncodedPath(movieId).build(),
                 null,

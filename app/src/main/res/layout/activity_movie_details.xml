@@ -20,7 +20,7 @@
                 android:layout_height="16dp"
                 android:gravity = "center_vertical|center_horizontal"
                 android:visibility="invisible"
-                tools:layout_editor_absoluteY="25dp"
+                tools:layout_editor_absoluteY="50dp"
                 tools:layout_editor_absoluteX="8dp" />
 
 

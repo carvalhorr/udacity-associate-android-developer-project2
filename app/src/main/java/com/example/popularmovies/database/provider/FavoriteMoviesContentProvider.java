@@ -13,61 +13,94 @@ import com.example.popularmovies.database.FavoriteMoviesContract;
 import com.example.popularmovies.database.FavoriteMoviesDatabaseManager;
 
 /**
+ * Content provider for favorite movies
+ *
  * Created by carvalhorr on 2/3/17.
  */
 
 public class FavoriteMoviesContentProvider extends ContentProvider {
 
+    // Constant used in the URI matcher to indicate a matched list of faovite movies URI
     private static final int FAVORITE_MOVIES_PATH = 100;
+
+    // Constant used in the URI matcher to indicate a specific movie matched
     private static final int FAVORITE_MOVIES_ITEM_PATH = 101;
 
+    // Variable to store the URI matcher
     private static final UriMatcher sUriMatcher = buildUriMatcher();
 
-    private FavoriteMoviesDatabaseManager database;
+    // Instance of the database manager
+    private FavoriteMoviesDatabaseManager databaseManager;
 
     @Override
     public boolean onCreate() {
-        // usually initialize the DBHelper here
-        database = FavoriteMoviesDatabaseManager.getInstance(getContext());
+
+        // get instance of the database manager
+        databaseManager = FavoriteMoviesDatabaseManager.getInstance(getContext());
+
         return true;
     }
 
     @Override
     public Uri insert(@NonNull Uri uri, ContentValues values) {
-        final SQLiteDatabase db = database.getWritableDatabase();
 
+        // get a writable database
+        final SQLiteDatabase writableDatabase = databaseManager.getWritableDatabase();
+
+        // check witch uri was called
         int match = sUriMatcher.match(uri);
-        Uri returnUri; // URI to be returned
+
+        // URI to be returned in case of successfull insertion of a movie into favorites
+        Uri returnUri;
 
         switch (match) {
+            // only insert if the URI called is the list of all favorites.
             case FAVORITE_MOVIES_PATH: {
-                long id = db.insert(FavoriteMoviesContract.FavoriteMovie.TABLE_NAME, null, values);
+
+                // insert movie into the favorite list
+                long id = writableDatabase.insert(FavoriteMoviesContract.FavoriteMovie.TABLE_NAME, null, values);
+
+                // check if the insertion was successfull
                 if (id > 0) {
+                    // set the return uri in case it was successful
                     returnUri = ContentUris.withAppendedId(FavoriteMoviesContract.FavoriteMovie.CONTENT_URI, id);
                 } else {
+                    // throw exception otherwise
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 }
                 break;
+
             }
+            // Throw exception in case the other URI was passed
             default: {
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
             }
         }
+
+        // Notify registered observers that content has changed
         getContext().getContentResolver().notifyChange(uri, null);
+
+        // Return the inserted favorite movie URI
         return returnUri;
     }
 
     @Override
     public Cursor query(@NonNull Uri uri, String[] projection, String selection,
                         String[] selectionArgs, String sortOrder) {
-        final SQLiteDatabase db = database.getReadableDatabase();
 
+        // get a readable database
+        final SQLiteDatabase readableDatabase = databaseManager.getReadableDatabase();
+
+        // check which uri was called
         int match = sUriMatcher.match(uri);
+
+        // Cursor with the list of movies to return
         Cursor retCursor;
 
         switch (match) {
             case FAVORITE_MOVIES_PATH: {
-                retCursor = db.query(FavoriteMoviesContract.FavoriteMovie.TABLE_NAME,
+                // return list of all favorite movies
+                retCursor = readableDatabase.query(FavoriteMoviesContract.FavoriteMovie.TABLE_NAME,
                         projection,
                         selection,
                         selectionArgs,
@@ -77,8 +110,9 @@ public class FavoriteMoviesContentProvider extends ContentProvider {
                 break;
             }
             case FAVORITE_MOVIES_ITEM_PATH: {
+                // return specific movie
                 String id = uri.getPathSegments().get(1);
-                retCursor = db.query(FavoriteMoviesContract.FavoriteMovie.TABLE_NAME,
+                retCursor = readableDatabase.query(FavoriteMoviesContract.FavoriteMovie.TABLE_NAME,
                         null,
                         "_ID = ?",
                         new String[]{id},
@@ -88,61 +122,77 @@ public class FavoriteMoviesContentProvider extends ContentProvider {
                 break;
             }
             default:
+                // if any other uri was called throw exception
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
 
+        // Return cursor with all favorite movies
         retCursor.setNotificationUri(getContext().getContentResolver(), uri);
-
         return retCursor;
 
     }
 
     @Override
     public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
-        final SQLiteDatabase db = database.getWritableDatabase();
 
+        // get a writable database
+        final SQLiteDatabase writableDatabase = databaseManager.getWritableDatabase();
+
+        // check the uri that was called
         int match = sUriMatcher.match(uri);
 
-        int tasksDeleted = 0;
+        // number of favorite movies deleted
+        int numberOfFavoriteMoviesDeleted = 0;
 
         switch (match) {
             case FAVORITE_MOVIES_PATH: {
-                db.delete(
+                // delete all favorite movies
+                writableDatabase.delete(
                         FavoriteMoviesContract.FavoriteMovie.TABLE_NAME,
                         selection,
                         selectionArgs);
                 break;
             }
             case FAVORITE_MOVIES_ITEM_PATH: {
+                // delete a specific favorite movie
                 String id = uri.getPathSegments().get(1);
-                tasksDeleted = db.delete(
+                numberOfFavoriteMoviesDeleted = writableDatabase.delete(
                         FavoriteMoviesContract.FavoriteMovie.TABLE_NAME,
                         "_id=?",
                         new String[]{id});
                 break;
             }
             default:
+                // if any other URI was called throw exception
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
 
-        if (tasksDeleted != 0) {
+        // notify registered observers if any favorite movie was deleted
+        if (numberOfFavoriteMoviesDeleted != 0) {
             getContext().getContentResolver().notifyChange(uri, null);
         }
 
-        return tasksDeleted;
+        // return number of favorite movies deleted
+        return numberOfFavoriteMoviesDeleted;
     }
 
     @Override
     public int update(@NonNull Uri uri, ContentValues values, String selection,
                       String[] selectionArgs) {
-        final SQLiteDatabase db = database.getWritableDatabase();
 
-        int tasksUpdated;
+        // get a writable database
+        final SQLiteDatabase writableDatabase = databaseManager.getWritableDatabase();
+
+        // number of favorite movies updated
+        int numberOfFavoriteMoviesUpdated = 0;
+
+        // check which uri was called
         int match = sUriMatcher.match(uri);
 
         switch (match) {
             case FAVORITE_MOVIES_PATH: {
-                tasksUpdated = db.update(
+                // update all favorite movies
+                numberOfFavoriteMoviesUpdated = writableDatabase.update(
                         FavoriteMoviesContract.FavoriteMovie.TABLE_NAME,
                         values,
                         selection,
@@ -151,8 +201,9 @@ public class FavoriteMoviesContentProvider extends ContentProvider {
             }
 
             case FAVORITE_MOVIES_ITEM_PATH: {
+                // update a specific favorite movie
                 String id = uri.getPathSegments().get(1);
-                tasksUpdated = db.update(
+                numberOfFavoriteMoviesUpdated = writableDatabase.update(
                         FavoriteMoviesContract.FavoriteMovie.TABLE_NAME,
                         values,
                         "_id=?",
@@ -160,45 +211,59 @@ public class FavoriteMoviesContentProvider extends ContentProvider {
                 break;
             }
             default:
+                // if any other uri was called throw an exception
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
 
-        if (tasksUpdated != 0) {
+        // notify any registered observer in case any favorite movie was updated
+        if (numberOfFavoriteMoviesUpdated != 0) {
             getContext().getContentResolver().notifyChange(uri, null);
         }
 
-        return tasksUpdated;
+        // return number of favorite movies updated
+        return numberOfFavoriteMoviesUpdated;
     }
 
     @Override
     public int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] values) {
-        final SQLiteDatabase db = database.getWritableDatabase();
 
+        // get a writable database
+        final SQLiteDatabase writableDatabase = databaseManager.getWritableDatabase();
+
+        // check which uri was called
         int match = sUriMatcher.match(uri);
 
         switch (match) {
             case FAVORITE_MOVIES_PATH: {
-                db.beginTransaction();
-                int rowsInserted = 0;
+                // insert ifthe uri called is the list of favorite movies
+
+                // begin transaction
+                writableDatabase.beginTransaction();
+
+                int numberOfFavoriteMoviesInserted = 0;
                 try {
+
+                    // iterate over list of favorite movies and insert each individually
                     for (ContentValues value : values) {
-                        long _id = db.insert(
+                        long _id = writableDatabase.insert(
                                 FavoriteMoviesContract.FavoriteMovie.TABLE_NAME
                                 , null, value);
                         if (_id != -1) {
-                            rowsInserted++;
+                            numberOfFavoriteMoviesInserted++;
                         }
                     }
-                    db.setTransactionSuccessful();
+                    writableDatabase.setTransactionSuccessful();
                 } finally {
-                    db.endTransaction();
+                    writableDatabase.endTransaction();
                 }
 
-                if (rowsInserted > 0) {
+                // notify any registered observer in case any favorite movie was inserted
+                if (numberOfFavoriteMoviesInserted > 0) {
                     getContext().getContentResolver().notifyChange(uri, null);
                 }
 
-                return rowsInserted;
+                // return the number of favorite movies inserted
+                return numberOfFavoriteMoviesInserted;
             }
             default:
                 return super.bulkInsert(uri, values);
@@ -207,6 +272,8 @@ public class FavoriteMoviesContentProvider extends ContentProvider {
 
     @Override
     public String getType(@NonNull Uri uri) {
+
+        // check the URI that was passed
         int match = sUriMatcher.match(uri);
         switch (match) {
             case FAVORITE_MOVIES_PATH: {
@@ -224,13 +291,18 @@ public class FavoriteMoviesContentProvider extends ContentProvider {
         }
     }
 
+    // build the URI matcher
     private static UriMatcher buildUriMatcher() {
+
         UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
+        // add the pattern for the list of all favorites
         uriMatcher.addURI(
                 FavoriteMoviesContract.AUTHORIRY,
                 FavoriteMoviesContract.FavoriteMovie.PATH,
                 FAVORITE_MOVIES_PATH);
+
+        // add the pattern for an favorite movie item
         uriMatcher.addURI(
                 FavoriteMoviesContract.AUTHORIRY,
                 FavoriteMoviesContract.FavoriteMovie.PATH + "/#",

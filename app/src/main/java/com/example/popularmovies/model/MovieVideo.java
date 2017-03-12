@@ -3,19 +3,26 @@ package com.example.popularmovies.model;
 import com.google.gson.annotations.SerializedName;
 
 /**
+ * Information about each video for a movie
+ *
  * Created by carvalhorr on 2/11/17.
  */
 
 public class MovieVideo {
+
+    // The video id
     @SerializedName("key")
     private String id;
 
+    // The video name
     @SerializedName("name")
     private String name;
 
+    // Video type (Trailer, etc)
     @SerializedName("type")
     private String type;
 
+    // Website where the video is hosted (Youtube, etc)
     @SerializedName("site")
     private String site;
 
