@@ -1,4 +1,4 @@
-package com.example.popularmovies.database.database;
+package com.example.popularmovies.database;
 
 import android.content.Context;
 import android.database.Cursor;
