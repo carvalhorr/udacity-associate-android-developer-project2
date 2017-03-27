@@ -25,7 +25,7 @@ android {
 
 }
 
-def getApiKey(String property){
+def getApiKey(String property) {
     Properties properties = new Properties()
     properties.load(new FileInputStream(System.getProperty("user.dir") + "/app/api.properties"))
     return properties.getProperty(property)
@@ -46,6 +46,7 @@ dependencies {
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
     compile 'com.google.code.gson:gson:2.6.1'
     compile 'com.android.support:design:25.1.1'
+
     compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
 
     // Add dependencies for using dagger2
@@ -65,6 +66,15 @@ dependencies {
 
     // Optional -- UI testing with Espresso
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
+
+    androidTestCompile('com.android.support.test.espresso:espresso-contrib:2.2.2') {
+        exclude group: 'com.android.support', module: 'appcompat-v7'
+        exclude group: 'com.android.support', module: 'support-v4'
+        exclude group: 'com.android.support', module: 'design'
+        exclude group: 'com.android.support', module: 'recyclerview-v7'
+    }
+
+    androidTestCompile("com.android.support.test.espresso:espresso-intents:2.2.2")
     // Optional -- UI testing with UI Automator (cross-app functional UI testing between system and instlled apps)
     androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.2'
 
