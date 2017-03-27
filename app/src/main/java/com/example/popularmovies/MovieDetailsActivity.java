@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.example.popularmovies.databinding.ActivityMovieDetailsBinding;
+import com.example.popularmovies.injection.PopularMoviesApplication;
 import com.example.popularmovies.model.MovieInfo;
 import com.example.popularmovies.model.MovieReview;
 import com.example.popularmovies.model.MovieVideo;
@@ -26,6 +27,8 @@ import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
+
+import javax.inject.Inject;
 
 /**
  * Show the details for a specific movie. The details consist of the movie title, poster, r
@@ -39,6 +42,9 @@ public class MovieDetailsActivity
         MovieInfoTasks.MovieInfoCallbacks,
         MovieVideosAdapter.VideoOnClickHandler,
         MovieReviewsAdapter.ReviewOnClickHandler {
+
+    @Inject
+    public MovieInfoTasks movieInfoTasks;
 
     // Name of MovieInfo parameter received from caller
     public static final String MOVIE_INFO_INTENT_PARAM = "movie_info";
@@ -72,6 +78,9 @@ public class MovieDetailsActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Inject dependencies
+        ((PopularMoviesApplication) getApplication()).getComponent().inject(this);
+
         // Load activity layout
         setContentView(R.layout.activity_movie_details);
 
@@ -79,7 +88,6 @@ public class MovieDetailsActivity
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_movie_details);
 
         // Get the movieInfo or movieId passed as parameter
-
 
         // Show the loading indicator
         showLoader();
@@ -106,14 +114,14 @@ public class MovieDetailsActivity
         } else {
 
             // Load the movieInfo asynchronously from the internet
-            MovieInfoTasks.retrieveMovieInfo(this, mMovieId, this);
+            movieInfoTasks.retrieveMovieInfo(this, mMovieId, this);
         }
 
         // Load the movie videos asynchronously from the internet
-        MovieInfoTasks.retrieveMovieVideos(this, mMovieId, this);
+        movieInfoTasks.retrieveMovieVideos(this, mMovieId, this);
 
         // Load the movie reviews asynchronously from the internet
-        MovieInfoTasks.retrieveMovieReviews(this, mMovieId, this);
+        movieInfoTasks.retrieveMovieReviews(this, mMovieId, this);
 
     }
 
