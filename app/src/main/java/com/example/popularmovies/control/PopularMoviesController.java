@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.util.List;
 
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -23,19 +22,13 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Created by carvalhorr on 1/21/17.
  */
 
-public class PopularMoviesController implements Callback<MovieInfoPageResponse> {
+public class PopularMoviesController {
 
     private String mTheMovieDBKey;
     private PopularMoviesAPI mPopularMoviesAPI = null;
-    private ListMoviesResponseCallback mCallback;
 
     public PopularMoviesController(String theMovieDBKey) {
-        this(theMovieDBKey, null);
-    }
-
-    public PopularMoviesController(String theMovieDBKey, ListMoviesResponseCallback callback) {
         this.mTheMovieDBKey = theMovieDBKey;
-        this.mCallback = callback;
         setupPopularMoviesAPI();
     }
 
@@ -51,10 +44,6 @@ public class PopularMoviesController implements Callback<MovieInfoPageResponse> 
 
         mPopularMoviesAPI = retrofit.create(PopularMoviesAPI.class);
 
-    }
-
-    public void getPopularMoviesAsync() {
-        mPopularMoviesAPI.getPopularMovies(mTheMovieDBKey).enqueue(this);
     }
 
     public List<MovieInfo> getPopularMovies() throws IOException {
@@ -92,10 +81,6 @@ public class PopularMoviesController implements Callback<MovieInfoPageResponse> 
         }
     }
 
-    public void getTopRatedMoviesAsync() {
-        mPopularMoviesAPI.getTopRatedMovies(mTheMovieDBKey).enqueue(this);
-    }
-
     public List<MovieInfo> getTopRatedMovies() throws IOException {
         MovieInfoPageResponse movieInfoPageResponse =
                 mPopularMoviesAPI.getTopRatedMovies(mTheMovieDBKey).execute().body();
@@ -103,33 +88,4 @@ public class PopularMoviesController implements Callback<MovieInfoPageResponse> 
 
     }
 
-    @Override
-    public void onResponse(Call<MovieInfoPageResponse> call, Response<MovieInfoPageResponse> response) {
-        if (mCallback != null) {
-            if (response.code() == 200) {
-                mCallback.movieListRetrieved(response.body().getMovieInfoList());
-            } else
-                mCallback.movieListRetrievalFailure();
-        }
-    }
-
-    @Override
-    public void onFailure(Call<MovieInfoPageResponse> call, Throwable t) {
-        if (mCallback != null)
-            mCallback.movieListRetrievalFailure();
-    }
-
-    public interface ListMoviesResponseCallback {
-        void movieListRetrieved(List<MovieInfo> movieList);
-
-        void movieListRetrievalFailure();
-
-        // methods added to allow testing async calls
-        boolean isFinished();
-
-        boolean isFailure();
-
-        List<MovieInfo> getMovieList();
-
-    }
 }
