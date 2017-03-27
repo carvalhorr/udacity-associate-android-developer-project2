@@ -38,7 +38,7 @@ public class MovieVideosAdapter extends RecyclerView.Adapter<MovieVideosAdapter.
         LayoutInflater layoutInflater = LayoutInflater.from(context);
         boolean attachToRoot = false;
 
-        View view = layoutInflater.inflate(R.layout.movie_card, parent, attachToRoot);
+        View view = layoutInflater.inflate(R.layout.video_card, parent, attachToRoot);
 
         MovieVideosViewholder movieVideosViewholder = new MovieVideosViewholder(view);
 
@@ -87,7 +87,7 @@ public class MovieVideosAdapter extends RecyclerView.Adapter<MovieVideosAdapter.
             super(itemView);
 
             // Get reference to the view elements
-            mNameTextView = (TextView) itemView.findViewById(R.id.tv_movie_title);
+            mNameTextView = (TextView) itemView.findViewById(R.id.tv_video_title);
 
             // Setup the review view click handler
             itemView.setOnClickListener(this);

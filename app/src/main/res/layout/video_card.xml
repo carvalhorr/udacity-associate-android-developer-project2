@@ -13,7 +13,7 @@
         android:src="@drawable/ic_play_arrow_black_36dp"/>
 
     <TextView
-        android:id="@+id/tv_movie_title"
+        android:id="@+id/tv_video_title"
         android:textColor="@color/colorAccent"
         android:layout_width="150dp"
         android:layout_height="50dp"
