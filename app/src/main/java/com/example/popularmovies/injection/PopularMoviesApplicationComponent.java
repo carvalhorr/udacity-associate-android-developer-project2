@@ -1,6 +1,7 @@
 package com.example.popularmovies.injection;
 
 import com.example.popularmovies.MovieDetailsActivity;
+import com.example.popularmovies.MovieGridFragment;
 
 import javax.inject.Singleton;
 
@@ -16,4 +17,5 @@ public interface PopularMoviesApplicationComponent {
 
     void inject(MovieDetailsActivity activity);
 
+    void inject(MovieGridFragment grafment);
 }

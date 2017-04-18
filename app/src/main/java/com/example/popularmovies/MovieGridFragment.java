@@ -22,10 +22,13 @@ import android.widget.TextView;
 
 import com.example.popularmovies.control.FavoriteController;
 import com.example.popularmovies.control.PopularMoviesController;
+import com.example.popularmovies.injection.PopularMoviesApplication;
 import com.example.popularmovies.model.MovieInfo;
 
 import java.io.IOException;
 import java.util.List;
+
+import javax.inject.Inject;
 
 /**
  * Created by carvalhorr on 2/11/17.
@@ -61,6 +64,12 @@ public class MovieGridFragment
 
     private InternetConnectionBroadcastReceiver mInternetConnectivityBroadcastReceiver;
 
+    @Inject
+    public PopularMoviesController popularMoviesController;
+
+    @Inject
+    public FavoriteController favoritesController;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -82,6 +91,7 @@ public class MovieGridFragment
         Bundle bundle = getArguments();
         if (getActivity() instanceof MovieListAdapter.MovieOnClickHandler) {
             mMovieOnClickHandler = (MovieListAdapter.MovieOnClickHandler) getActivity();
+            ((PopularMoviesApplication) getActivity().getApplication()).getComponent().inject(this);
         }
         if (bundle != null && bundle.containsKey(PARAM_QUERY_TYPE)) {
             mQueryType = bundle.getInt(PARAM_QUERY_TYPE);
@@ -143,20 +153,19 @@ public class MovieGridFragment
 
             @Override
             public List<MovieInfo> loadInBackground() {
-                PopularMoviesController controller = new PopularMoviesController(MOVIE_DB_API_KEY);
+                //PopularMoviesController controller = new PopularMoviesController(MOVIE_DB_API_KEY);
                 List<MovieInfo> listMovies = null;
                 try {
                     switch (mQueryType) {
                         case POPULAR_MOVIE_LOADER: {
-                            listMovies = controller.getPopularMovies();
+                            listMovies = popularMoviesController.getPopularMovies();
                             break;
                         }
                         case TOP_RATED_MOVIE_LOADER: {
-                            listMovies = controller.getTopRatedMovies();
+                            listMovies = popularMoviesController.getTopRatedMovies();
                             break;
                         }
                         case FAVORITE_MOVIE_LOADER: {
-                            FavoriteController favoritesController = new FavoriteController();
                             listMovies = favoritesController.getFavorites(getContext());
                             break;
                         }

@@ -1,5 +1,6 @@
 package com.example.popularmovies.control;
 
+import com.example.popularmovies.injection.annotation.MovieDbApiKey;
 import com.example.popularmovies.network.data.MovieInfoPageResponse;
 import com.example.popularmovies.network.data.MovieReviewsPageResponse;
 import com.example.popularmovies.network.data.MovieVideosResponse;
@@ -7,16 +8,14 @@ import com.example.popularmovies.model.MovieInfo;
 import com.example.popularmovies.model.MovieReview;
 import com.example.popularmovies.model.MovieVideo;
 import com.example.popularmovies.network.PopularMoviesAPI;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import retrofit2.Call;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by carvalhorr on 1/21/17.
@@ -27,23 +26,10 @@ public class PopularMoviesController {
     private String mTheMovieDBKey;
     private PopularMoviesAPI mPopularMoviesAPI = null;
 
-    public PopularMoviesController(String theMovieDBKey) {
+    @Inject
+    public PopularMoviesController(PopularMoviesAPI popularMoviesAPI, @MovieDbApiKey String theMovieDBKey) {
         this.mTheMovieDBKey = theMovieDBKey;
-        setupPopularMoviesAPI();
-    }
-
-    private void setupPopularMoviesAPI() {
-        Gson gson = new GsonBuilder()
-                .setLenient()
-                .create();
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(PopularMoviesAPI.MOVIE_DB_BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .build();
-
-        mPopularMoviesAPI = retrofit.create(PopularMoviesAPI.class);
-
+        this.mPopularMoviesAPI = popularMoviesAPI;
     }
 
     public List<MovieInfo> getPopularMovies() throws IOException {

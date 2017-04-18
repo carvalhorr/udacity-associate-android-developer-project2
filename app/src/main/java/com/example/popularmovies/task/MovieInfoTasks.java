@@ -13,6 +13,8 @@ import com.example.popularmovies.model.MovieVideo;
 import java.io.IOException;
 import java.util.List;
 
+import javax.inject.Inject;
+
 /**
  * AsynTasks to load movie info, videos and reviews from the internet. These methods are intended
  * to be called from the UI in order to execute in a separate thread from the main UI thread.
@@ -21,21 +23,28 @@ import java.util.List;
  */
 public class MovieInfoTasks {
 
+    private PopularMoviesController popularMoviesController;
+
+    @Inject
+    public MovieInfoTasks(PopularMoviesController popularMoviesController) {
+        this.popularMoviesController = popularMoviesController;
+    }
+
     /**
      * Retrieve the movie info for a movie from the internet using an AsyncTask.
      * @param context
      * @param movieId
      * @param callbacks
      */
-    public static void retrieveMovieInfo(final Context context, final String movieId, final MovieInfoCallbacks callbacks) {
+    public void retrieveMovieInfo(final Context context, final String movieId, final MovieInfoCallbacks callbacks) {
         new AsyncTask<String, Void, MovieInfo>() {
 
             @Override
             protected MovieInfo doInBackground(String... params) {
                 // Call the corresponding controller method to retrieve the movie info from the internet
-                PopularMoviesController controller = new PopularMoviesController(MovieGridFragment.MOVIE_DB_API_KEY);
+                // PopularMoviesController controller = new PopularMoviesController(MovieGridFragment.MOVIE_DB_API_KEY);
                 try {
-                    return controller.getMovieInfo(movieId);
+                    return popularMoviesController.getMovieInfo(movieId);
                 } catch (IOException e) {
                     e.printStackTrace();
                     return null;
@@ -59,7 +68,7 @@ public class MovieInfoTasks {
      * @param movieId
      * @param callbacks
      */
-    public static void retrieveMovieVideos(final Context context, final String movieId, final MovieInfoCallbacks callbacks) {
+    public void retrieveMovieVideos(final Context context, final String movieId, final MovieInfoCallbacks callbacks) {
 
         new AsyncTask<String, Void, List<MovieVideo>>() {
 
@@ -67,9 +76,9 @@ public class MovieInfoTasks {
             protected List<MovieVideo> doInBackground(String... params) {
                 // Call the corresponding controller method to retrieve the list of videos
                 // from the internet.
-                PopularMoviesController controller = new PopularMoviesController(MovieGridFragment.MOVIE_DB_API_KEY);
+                //PopularMoviesController controller = new PopularMoviesController(MovieGridFragment.MOVIE_DB_API_KEY);
                 try {
-                    return controller.getVideosForMovie(movieId);
+                    return popularMoviesController.getVideosForMovie(movieId);
                 } catch (IOException e) {
                     e.printStackTrace();
                     return null;
@@ -93,16 +102,16 @@ public class MovieInfoTasks {
      * @param movieId
      * @param callbacks
      */
-    public static void retrieveMovieReviews(final Context context, final String movieId, final MovieInfoCallbacks callbacks) {
+    public void retrieveMovieReviews(final Context context, final String movieId, final MovieInfoCallbacks callbacks) {
         new AsyncTask<String, Void, List<MovieReview>>() {
 
             @Override
             protected List<MovieReview> doInBackground(String... params) {
                 // Call the corresponding controller method to retrieve the list of reviews for a
                 // movie using an AsyncTask
-                PopularMoviesController controller = new PopularMoviesController(MovieGridFragment.MOVIE_DB_API_KEY);
+                // PopularMoviesController controller = new PopularMoviesController(MovieGridFragment.MOVIE_DB_API_KEY);
                 try {
-                    return controller.getReviewsForMovie(movieId);
+                    return popularMoviesController.getReviewsForMovie(movieId);
                 } catch (IOException e) {
                     e.printStackTrace();
                     return null;

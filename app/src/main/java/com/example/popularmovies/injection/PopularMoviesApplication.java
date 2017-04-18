@@ -1,6 +1,7 @@
 package com.example.popularmovies.injection;
 
 import android.app.Application;
+import android.content.ContentResolver;
 import android.content.Context;
 
 /**
