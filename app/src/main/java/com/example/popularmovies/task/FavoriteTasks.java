@@ -8,6 +8,8 @@ import com.example.popularmovies.model.MovieInfo;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 /**
  *
  * AsyncTasks to perform database functions related to favorite movies. These methods should be called
@@ -18,6 +20,14 @@ import java.util.List;
 
 public class FavoriteTasks {
 
+
+    private FavoriteController favoriteController;
+
+    @Inject
+    public FavoriteTasks(FavoriteController favoriteController) {
+        this.favoriteController = favoriteController;
+    }
+
     /**
      * Add a new movie to favorites using an AsyncTask.
      *
@@ -25,14 +35,13 @@ public class FavoriteTasks {
      * @param movieInfo
      * @param callbacks
      */
-    public static void addToFavoriteTask(final Context context, final MovieInfo movieInfo, final FavoriteCallbacks callbacks) {
+    public void addToFavoriteTask(final Context context, final MovieInfo movieInfo, final FavoriteCallbacks callbacks) {
         new AsyncTask<MovieInfo, Void, Boolean>() {
 
             @Override
             protected Boolean doInBackground(MovieInfo... params) {
                 // Call the controller method to add the movie to favorites
-                FavoriteController controller = new FavoriteController();
-                return controller.addToFavorite(context, movieInfo);
+                return favoriteController.addToFavorite(context, movieInfo);
             }
 
             @Override
@@ -53,15 +62,14 @@ public class FavoriteTasks {
      * @param movieId
      * @param callbacks
      */
-    public static void removeFromFavoriteTask(final Context context, final String movieId, final FavoriteCallbacks callbacks) {
+    public void removeFromFavoriteTask(final Context context, final String movieId, final FavoriteCallbacks callbacks) {
 
         new AsyncTask<String, Void, Boolean>() {
 
             @Override
             protected Boolean doInBackground(String... params) {
                 // Call the controller to remove the movie from favorites
-                FavoriteController controller = new FavoriteController();
-                return controller.removeFromFavorite(context, movieId);
+                return favoriteController.removeFromFavorite(context, movieId);
             }
 
             @Override
@@ -81,14 +89,13 @@ public class FavoriteTasks {
      * @param movieId
      * @param callbacks
      */
-    public static void isFavorite(final Context context, final String movieId, final FavoriteCallbacks callbacks) {
+    public void isFavorite(final Context context, final String movieId, final FavoriteCallbacks callbacks) {
         new AsyncTask<String, Void, Boolean>() {
 
             @Override
             protected Boolean doInBackground(String... params) {
                 // Call the controller to verify if the movie is part of favorites
-                FavoriteController controller = new FavoriteController();
-                return controller.isFavorite(context, movieId);
+                return favoriteController.isFavorite(context, movieId);
             }
 
             @Override
@@ -107,14 +114,13 @@ public class FavoriteTasks {
      * @param context
      * @param callbacks
      */
-    public static void loadFavoritesAsync(final Context context, final FavoriteCallbacks callbacks) {
+    public void loadFavoritesAsync(final Context context, final FavoriteCallbacks callbacks) {
         new AsyncTask<String, Void, List<MovieInfo>>() {
 
             @Override
             protected List<MovieInfo> doInBackground(String... params) {
                 // Call the controller to get the list of favorite movies
-                FavoriteController controller = new FavoriteController();
-                return controller.getFavorites(context);
+                return favoriteController.getFavorites(context);
             }
 
             @Override

@@ -19,7 +19,10 @@ public class PopularMoviesApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        component = DaggerPopularMoviesApplicationComponent.create();
+        component = DaggerPopularMoviesApplicationComponent
+                .builder()
+                .popularMoviesInjectionModule(new PopularMoviesInjectionModule(PopularMoviesApplication.this))
+                .build();
     }
 
     public PopularMoviesApplicationComponent getComponent() {

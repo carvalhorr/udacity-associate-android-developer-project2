@@ -1,10 +1,14 @@
 package com.example.popularmovies.injection;
 
+import android.content.Context;
+
 import com.example.popularmovies.MovieGridFragment;
 import com.example.popularmovies.control.FavoriteController;
 import com.example.popularmovies.control.PopularMoviesController;
+import com.example.popularmovies.database.FavoriteMoviesDatabaseManager;
 import com.example.popularmovies.injection.annotation.MovieDbApiKey;
 import com.example.popularmovies.network.PopularMoviesAPI;
+import com.example.popularmovies.task.FavoriteTasks;
 import com.example.popularmovies.task.MovieInfoTasks;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -22,6 +26,18 @@ import retrofit2.converter.gson.GsonConverterFactory;
 @Module
 public class PopularMoviesInjectionModule {
 
+
+    private Context context;
+
+    public PopularMoviesInjectionModule(Context context) {
+        this.context = context;
+    }
+
+    @Provides //scope is not necessary for parameters stored within the module
+    public Context context() {
+        return context;
+    }
+
     @Provides
     @Singleton
     public PopularMoviesController providesMovieController(PopularMoviesAPI api, @MovieDbApiKey String movieDbApi) {
@@ -38,6 +54,18 @@ public class PopularMoviesInjectionModule {
     @Singleton
     public MovieInfoTasks provideMovieInfoTasks(PopularMoviesController controller) {
         return new MovieInfoTasks(controller);
+    }
+
+    @Provides
+    @Singleton
+    public FavoriteTasks provideFavoriteTasks(FavoriteController controller) {
+        return new FavoriteTasks(controller);
+    }
+
+    @Provides
+    @Singleton
+    public FavoriteMoviesDatabaseManager provideFavoriteMoviesDatabaseManager() {
+        return FavoriteMoviesDatabaseManager.getInstance(context);
     }
 
     @Provides

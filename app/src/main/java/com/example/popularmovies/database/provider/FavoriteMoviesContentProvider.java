@@ -11,6 +11,9 @@ import android.support.annotation.NonNull;
 
 import com.example.popularmovies.database.FavoriteMoviesContract;
 import com.example.popularmovies.database.FavoriteMoviesDatabaseManager;
+import com.example.popularmovies.injection.PopularMoviesApplication;
+
+import javax.inject.Inject;
 
 /**
  * Content provider for favorite movies
@@ -30,22 +33,27 @@ public class FavoriteMoviesContentProvider extends ContentProvider {
     private static final UriMatcher sUriMatcher = buildUriMatcher();
 
     // Instance of the database manager
-    private FavoriteMoviesDatabaseManager databaseManager;
+    @Inject
+    public FavoriteMoviesDatabaseManager databaseManager;
 
     @Override
     public boolean onCreate() {
 
-        // get instance of the database manager
-        databaseManager = FavoriteMoviesDatabaseManager.getInstance(getContext());
-
         return true;
+    }
+
+    private FavoriteMoviesDatabaseManager getDatabaseManager() {
+        if (databaseManager == null) {
+            ((PopularMoviesApplication) getContext().getApplicationContext()).getComponent().inject(this);
+        }
+        return databaseManager;
     }
 
     @Override
     public Uri insert(@NonNull Uri uri, ContentValues values) {
 
         // get a writable database
-        final SQLiteDatabase writableDatabase = databaseManager.getWritableDatabase();
+        final SQLiteDatabase writableDatabase = getDatabaseManager().getWritableDatabase();
 
         // check witch uri was called
         int match = sUriMatcher.match(uri);
@@ -89,7 +97,7 @@ public class FavoriteMoviesContentProvider extends ContentProvider {
                         String[] selectionArgs, String sortOrder) {
 
         // get a readable database
-        final SQLiteDatabase readableDatabase = databaseManager.getReadableDatabase();
+        final SQLiteDatabase readableDatabase = getDatabaseManager().getReadableDatabase();
 
         // check which uri was called
         int match = sUriMatcher.match(uri);
@@ -136,7 +144,7 @@ public class FavoriteMoviesContentProvider extends ContentProvider {
     public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
 
         // get a writable database
-        final SQLiteDatabase writableDatabase = databaseManager.getWritableDatabase();
+        final SQLiteDatabase writableDatabase = getDatabaseManager().getWritableDatabase();
 
         // check the uri that was called
         int match = sUriMatcher.match(uri);
@@ -181,7 +189,7 @@ public class FavoriteMoviesContentProvider extends ContentProvider {
                       String[] selectionArgs) {
 
         // get a writable database
-        final SQLiteDatabase writableDatabase = databaseManager.getWritableDatabase();
+        final SQLiteDatabase writableDatabase = getDatabaseManager().getWritableDatabase();
 
         // number of favorite movies updated
         int numberOfFavoriteMoviesUpdated = 0;
@@ -228,7 +236,7 @@ public class FavoriteMoviesContentProvider extends ContentProvider {
     public int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] values) {
 
         // get a writable database
-        final SQLiteDatabase writableDatabase = databaseManager.getWritableDatabase();
+        final SQLiteDatabase writableDatabase = getDatabaseManager().getWritableDatabase();
 
         // check which uri was called
         int match = sUriMatcher.match(uri);

@@ -46,6 +46,9 @@ public class MovieDetailsActivity
     @Inject
     public MovieInfoTasks movieInfoTasks;
 
+    @Inject
+    public FavoriteTasks favoriteTasks;
+
     // Name of MovieInfo parameter received from caller
     public static final String MOVIE_INFO_INTENT_PARAM = "movie_info";
 
@@ -240,9 +243,9 @@ public class MovieDetailsActivity
 
         if (isFavoriteLoaded) {
             if (!isFavorite) {
-                FavoriteTasks.addToFavoriteTask(this, movieInfo, this);
+                favoriteTasks.addToFavoriteTask(this, movieInfo, this);
             } else {
-                FavoriteTasks.removeFromFavoriteTask(this, movieInfo.getMovieId(), this);
+                favoriteTasks.removeFromFavoriteTask(this, movieInfo.getMovieId(), this);
             }
         }
 
@@ -313,7 +316,7 @@ public class MovieDetailsActivity
             this.movieInfo = movieInfo;
 
             // Check if the movie is favorite
-            FavoriteTasks.isFavorite(this, this.movieInfo.getMovieId(), this);
+            favoriteTasks.isFavorite(this, this.movieInfo.getMovieId(), this);
             hideLoader();
             hideError();
 
