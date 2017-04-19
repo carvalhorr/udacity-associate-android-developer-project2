@@ -20,15 +20,15 @@ import java.util.List;
 public class MovieReviewsAdapter extends RecyclerView.Adapter<MovieReviewsAdapter.MovieReviewsViewholder> {
 
     // Holds the list of reviews
-    private List<MovieReview> mMovieReviews;
+    private List<MovieReview> movieReviews;
 
     // Reference to the external handler for a review click
-    private final ReviewOnClickHandler mReviewOnClickHandler;
+    private final ReviewOnClickHandler reviewOnClickHandler;
 
     public MovieReviewsAdapter(ReviewOnClickHandler reviewOnClickHandler) {
 
         // Stores the reference to the handler of a review click
-        this.mReviewOnClickHandler = reviewOnClickHandler;
+        this.reviewOnClickHandler = reviewOnClickHandler;
 
     }
 
@@ -50,7 +50,7 @@ public class MovieReviewsAdapter extends RecyclerView.Adapter<MovieReviewsAdapte
     @Override
     public void onBindViewHolder(MovieReviewsViewholder holder, int position) {
 
-        MovieReview movieReview = mMovieReviews.get(position);
+        MovieReview movieReview = movieReviews.get(position);
         holder.bind(movieReview);
 
     }
@@ -58,8 +58,8 @@ public class MovieReviewsAdapter extends RecyclerView.Adapter<MovieReviewsAdapte
     @Override
     public int getItemCount() {
 
-        if (mMovieReviews == null) return 0;
-        return mMovieReviews.size();
+        if (movieReviews == null) return 0;
+        return movieReviews.size();
 
     }
 
@@ -70,7 +70,7 @@ public class MovieReviewsAdapter extends RecyclerView.Adapter<MovieReviewsAdapte
      */
     public void setMovieReviews(List<MovieReview> movieReviews) {
 
-        this.mMovieReviews = movieReviews;
+        this.movieReviews = movieReviews;
         notifyDataSetChanged();
 
     }
@@ -80,9 +80,9 @@ public class MovieReviewsAdapter extends RecyclerView.Adapter<MovieReviewsAdapte
             implements View.OnClickListener {
 
         // Declare variables for the view elements
-        private MovieReview mMovieReview;
-        private TextView mAuthor;
-        private TextView mContent;
+        private MovieReview movieReview;
+        private TextView author;
+        private TextView content;
 
         public MovieReviewsViewholder(View itemView) {
 
@@ -92,8 +92,8 @@ public class MovieReviewsAdapter extends RecyclerView.Adapter<MovieReviewsAdapte
             itemView.setOnClickListener(this);
 
             // Get references to view elements
-            mAuthor = (TextView) itemView.findViewById(R.id.tv_author);
-            mContent = (TextView) itemView.findViewById(R.id.tv_content);
+            author = (TextView) itemView.findViewById(R.id.tv_author);
+            content = (TextView) itemView.findViewById(R.id.tv_content);
 
         }
 
@@ -105,9 +105,9 @@ public class MovieReviewsAdapter extends RecyclerView.Adapter<MovieReviewsAdapte
         @Override
         public void onClick(View v) {
 
-            if (mReviewOnClickHandler != null) {
+            if (reviewOnClickHandler != null) {
 
-                mReviewOnClickHandler.onClick(mMovieReview);
+                reviewOnClickHandler.onClick(movieReview);
 
             }
 
@@ -117,9 +117,9 @@ public class MovieReviewsAdapter extends RecyclerView.Adapter<MovieReviewsAdapte
          * Store and display the review info on the user interface
          */
         public void bind(MovieReview movieReview) {
-            mMovieReview = movieReview;
-            mAuthor.setText(mMovieReview.getAuthor());
-            mContent.setText(mMovieReview.getContent());
+            this.movieReview = movieReview;
+            author.setText(this.movieReview.getAuthor());
+            content.setText(this.movieReview.getContent());
         }
     }
 

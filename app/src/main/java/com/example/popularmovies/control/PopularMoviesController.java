@@ -23,30 +23,30 @@ import retrofit2.Response;
 
 public class PopularMoviesController {
 
-    private String mTheMovieDBKey;
-    private PopularMoviesAPI mPopularMoviesAPI = null;
+    private String theMovieDBKey;
+    private PopularMoviesAPI popularMoviesAPI = null;
 
     @Inject
     public PopularMoviesController(PopularMoviesAPI popularMoviesAPI, @MovieDbApiKey String theMovieDBKey) {
-        this.mTheMovieDBKey = theMovieDBKey;
-        this.mPopularMoviesAPI = popularMoviesAPI;
+        this.theMovieDBKey = theMovieDBKey;
+        this.popularMoviesAPI = popularMoviesAPI;
     }
 
     public List<MovieInfo> getPopularMovies() throws IOException {
         Response<MovieInfoPageResponse> response =
-                mPopularMoviesAPI.getPopularMovies(mTheMovieDBKey).execute();
+                popularMoviesAPI.getPopularMovies(theMovieDBKey).execute();
         MovieInfoPageResponse movieInfoPageResponse = response.body();
         return movieInfoPageResponse.getMovieInfoList();
     }
 
     public MovieInfo getMovieInfo(String movieId) throws IOException {
-        Call call = mPopularMoviesAPI.getMovieInfo(movieId, mTheMovieDBKey);
+        Call call = popularMoviesAPI.getMovieInfo(movieId, theMovieDBKey);
         Response<MovieInfo> r = call.execute();
         return r.body();
     }
 
     public List<MovieVideo> getVideosForMovie(String movieId) throws IOException {
-        Call call = mPopularMoviesAPI.getMovieVideos(movieId, mTheMovieDBKey);
+        Call call = popularMoviesAPI.getMovieVideos(movieId, theMovieDBKey);
         Response<MovieVideosResponse> r = call.execute();
         MovieVideosResponse body = r.body();
         if (body == null) {
@@ -57,7 +57,7 @@ public class PopularMoviesController {
     }
 
     public List<MovieReview> getReviewsForMovie(String movieId) throws IOException {
-        Call call = mPopularMoviesAPI.getMovieReviews(movieId, mTheMovieDBKey);
+        Call call = popularMoviesAPI.getMovieReviews(movieId, theMovieDBKey);
         Response<MovieReviewsPageResponse> r = call.execute();
         MovieReviewsPageResponse body = r.body();
         if (body == null) {
@@ -69,7 +69,7 @@ public class PopularMoviesController {
 
     public List<MovieInfo> getTopRatedMovies() throws IOException {
         MovieInfoPageResponse movieInfoPageResponse =
-                mPopularMoviesAPI.getTopRatedMovies(mTheMovieDBKey).execute().body();
+                popularMoviesAPI.getTopRatedMovies(theMovieDBKey).execute().body();
         return movieInfoPageResponse.getMovieInfoList();
 
     }

@@ -38,12 +38,12 @@ public class MovieGridFragment
         implements LoaderManager.LoaderCallbacks<List<MovieInfo>> {
 
     // Declaration of user interface elements
-    private RecyclerView mMovieGridRecyclerView;
-    private TextView mErrorMessageView;
-    private ProgressBar mLoadingIndicator;
+    private RecyclerView movieGridRecyclerView;
+    private TextView errorMessageView;
+    private ProgressBar loadingIndicator;
 
     // Declaration of list of movies adapter
-    private MovieListAdapter mMovieListAdapter;
+    private MovieListAdapter movieListAdapter;
 
     // Constants for the different loaders
     public static final int POPULAR_MOVIE_LOADER = 1;
@@ -54,15 +54,15 @@ public class MovieGridFragment
     public static final String PARAM_QUERY_TYPE = "query_type";
 
     // Type of query of this fragment instance. It musb be one of the loader constants and it is received as a parameter from the activity using the PARAM_QUERY_TYPE.
-    private int mQueryType;
+    private int queryType;
 
     // themoviedb.org API key. Check api.properties to see the actual value. Gradle is used to inject it here.
     public static final String MOVIE_DB_API_KEY = BuildConfig.API_KEY;
 
     // Class responsible to handle click on a movie item. The activity where the fragment is located must implement MovieOnClickHandler
-    private MovieListAdapter.MovieOnClickHandler mMovieOnClickHandler;
+    private MovieListAdapter.MovieOnClickHandler movieOnClickHandler;
 
-    private InternetConnectionBroadcastReceiver mInternetConnectivityBroadcastReceiver;
+    private InternetConnectionBroadcastReceiver internetConnectivityBroadcastReceiver;
 
     @Inject
     public PopularMoviesController popularMoviesController;
@@ -77,9 +77,9 @@ public class MovieGridFragment
         View rootView = inflater.inflate(R.layout.fragment_movie_grid, container, false);
 
         // Get references for view elements
-        mMovieGridRecyclerView = (RecyclerView) rootView.findViewById(R.id.rv_movies_grid);
-        mLoadingIndicator = (ProgressBar) rootView.findViewById(R.id.pb_loading_indicator);
-        mErrorMessageView = (TextView) rootView.findViewById(R.id.tv_error_message);
+        movieGridRecyclerView = (RecyclerView) rootView.findViewById(R.id.rv_movies_grid);
+        loadingIndicator = (ProgressBar) rootView.findViewById(R.id.pb_loading_indicator);
+        errorMessageView = (TextView) rootView.findViewById(R.id.tv_error_message);
 
         return rootView;
     }
@@ -90,11 +90,11 @@ public class MovieGridFragment
         super.onActivityCreated(savedInstanceState);
         Bundle bundle = getArguments();
         if (getActivity() instanceof MovieListAdapter.MovieOnClickHandler) {
-            mMovieOnClickHandler = (MovieListAdapter.MovieOnClickHandler) getActivity();
+            movieOnClickHandler = (MovieListAdapter.MovieOnClickHandler) getActivity();
             ((PopularMoviesApplication) getActivity().getApplication()).getComponent().inject(this);
         }
         if (bundle != null && bundle.containsKey(PARAM_QUERY_TYPE)) {
-            mQueryType = bundle.getInt(PARAM_QUERY_TYPE);
+            queryType = bundle.getInt(PARAM_QUERY_TYPE);
             setupMovieGridRecyclerView();
         }
     }
@@ -104,17 +104,17 @@ public class MovieGridFragment
         super.onResume();
 
         // Load the movie list
-        startMoviesLoaderIfConnectedToInternet(mQueryType);
+        startMoviesLoaderIfConnectedToInternet(queryType);
 
         // Intent filter for internet connectivity action
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
 
         // Create new broadcast receiver
-        mInternetConnectivityBroadcastReceiver = new InternetConnectionBroadcastReceiver();
+        internetConnectivityBroadcastReceiver = new InternetConnectionBroadcastReceiver();
 
         // Register the receiver to listen to changes on connectivity status
-        getActivity().registerReceiver(mInternetConnectivityBroadcastReceiver, intentFilter);
+        getActivity().registerReceiver(internetConnectivityBroadcastReceiver, intentFilter);
     }
 
     @Override
@@ -122,7 +122,7 @@ public class MovieGridFragment
         super.onPause();
 
         // Stop listening to changes on connectivity status change when the fragment is paused
-        getActivity().unregisterReceiver(mInternetConnectivityBroadcastReceiver);
+        getActivity().unregisterReceiver(internetConnectivityBroadcastReceiver);
     }
 
     private void setupMovieGridRecyclerView() {
@@ -131,12 +131,12 @@ public class MovieGridFragment
 
         GridLayoutManager movieGridLayoutManager =
                 new GridLayoutManager(getContext(), spanCount, GridLayoutManager.VERTICAL, reverseLayout);
-        mMovieGridRecyclerView.setLayoutManager(movieGridLayoutManager);
+        movieGridRecyclerView.setLayoutManager(movieGridLayoutManager);
 
-        mMovieListAdapter = new MovieListAdapter(mMovieOnClickHandler, mQueryType == FAVORITE_MOVIE_LOADER);
+        movieListAdapter = new MovieListAdapter(movieOnClickHandler, queryType == FAVORITE_MOVIE_LOADER);
 
 
-        mMovieGridRecyclerView.setAdapter(mMovieListAdapter);
+        movieGridRecyclerView.setAdapter(movieListAdapter);
     }
 
     @Override
@@ -156,7 +156,7 @@ public class MovieGridFragment
                 //PopularMoviesController controller = new PopularMoviesController(MOVIE_DB_API_KEY);
                 List<MovieInfo> listMovies = null;
                 try {
-                    switch (mQueryType) {
+                    switch (queryType) {
                         case POPULAR_MOVIE_LOADER: {
                             listMovies = popularMoviesController.getPopularMovies();
                             break;
@@ -183,7 +183,7 @@ public class MovieGridFragment
         if (data == null) {
             showError();
         } else {
-            mMovieListAdapter.setMovieInfoData(data);
+            movieListAdapter.setMovieInfoData(data);
             showData();
         }
     }
@@ -217,18 +217,18 @@ public class MovieGridFragment
      * Leave only the loader visible on the user interface.
      */
     private void showLoader() {
-        mMovieGridRecyclerView.setVisibility(View.INVISIBLE);
-        mErrorMessageView.setVisibility(View.INVISIBLE);
-        mLoadingIndicator.setVisibility(View.VISIBLE);
+        movieGridRecyclerView.setVisibility(View.INVISIBLE);
+        errorMessageView.setVisibility(View.INVISIBLE);
+        loadingIndicator.setVisibility(View.VISIBLE);
     }
 
     /**
      * Leave only the RecyclerView visible on the user interface.
      */
     private void showData() {
-        mMovieGridRecyclerView.setVisibility(View.VISIBLE);
-        mErrorMessageView.setVisibility(View.INVISIBLE);
-        mLoadingIndicator.setVisibility(View.INVISIBLE);
+        movieGridRecyclerView.setVisibility(View.VISIBLE);
+        errorMessageView.setVisibility(View.INVISIBLE);
+        loadingIndicator.setVisibility(View.INVISIBLE);
 
     }
 
@@ -236,9 +236,9 @@ public class MovieGridFragment
      * Leave only the error message visible on the user interface.
      */
     private void showError() {
-        mMovieGridRecyclerView.setVisibility(View.INVISIBLE);
-        mErrorMessageView.setVisibility(View.VISIBLE);
-        mLoadingIndicator.setVisibility(View.INVISIBLE);
+        movieGridRecyclerView.setVisibility(View.INVISIBLE);
+        errorMessageView.setVisibility(View.VISIBLE);
+        loadingIndicator.setVisibility(View.INVISIBLE);
 
     }
 
@@ -261,7 +261,7 @@ public class MovieGridFragment
      */
     private void setupConnectivity() {
         if(isConnected()) {
-            startMoviesLoaderIfConnectedToInternet(mQueryType);
+            startMoviesLoaderIfConnectedToInternet(queryType);
         } else {
             showError();
         }

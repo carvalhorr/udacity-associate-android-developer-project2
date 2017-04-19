@@ -19,15 +19,15 @@ import java.util.List;
 public class MovieVideosAdapter extends RecyclerView.Adapter<MovieVideosAdapter.MovieVideosViewholder> {
 
     // holds the list of videos
-    private List<MovieVideo> mMovieVideos;
+    private List<MovieVideo> movieVideos;
 
     // External video click handler
-    private final VideoOnClickHandler mVideoOnClickHandler;
+    private final VideoOnClickHandler videoOnClickHandler;
 
     public MovieVideosAdapter(VideoOnClickHandler videoOnClickHandler) {
 
         // Stores the external video click handler
-        this.mVideoOnClickHandler = videoOnClickHandler;
+        this.videoOnClickHandler = videoOnClickHandler;
 
     }
 
@@ -49,7 +49,7 @@ public class MovieVideosAdapter extends RecyclerView.Adapter<MovieVideosAdapter.
     @Override
     public void onBindViewHolder(MovieVideosViewholder holder, int position) {
 
-        MovieVideo movieVideo = mMovieVideos.get(position);
+        MovieVideo movieVideo = movieVideos.get(position);
         holder.bind(movieVideo);
 
     }
@@ -57,8 +57,8 @@ public class MovieVideosAdapter extends RecyclerView.Adapter<MovieVideosAdapter.
     @Override
     public int getItemCount() {
 
-        if (mMovieVideos == null) return 0;
-        return mMovieVideos.size();
+        if (movieVideos == null) return 0;
+        return movieVideos.size();
 
     }
 
@@ -69,7 +69,7 @@ public class MovieVideosAdapter extends RecyclerView.Adapter<MovieVideosAdapter.
      */
     public void setMovieInfoData(List<MovieVideo> movieVideos) {
 
-        this.mMovieVideos = movieVideos;
+        this.movieVideos = movieVideos;
         notifyDataSetChanged();
 
     }
@@ -79,15 +79,15 @@ public class MovieVideosAdapter extends RecyclerView.Adapter<MovieVideosAdapter.
             implements View.OnClickListener {
 
         // Declare variables for view elements
-        private MovieVideo mMovieVideo;
-        private TextView mNameTextView;
+        private MovieVideo movieVideo;
+        private TextView movieName;
 
         public MovieVideosViewholder(View itemView) {
 
             super(itemView);
 
             // Get reference to the view elements
-            mNameTextView = (TextView) itemView.findViewById(R.id.tv_video_title);
+            movieName = (TextView) itemView.findViewById(R.id.tv_video_title);
 
             // Setup the review view click handler
             itemView.setOnClickListener(this);
@@ -101,8 +101,8 @@ public class MovieVideosAdapter extends RecyclerView.Adapter<MovieVideosAdapter.
         @Override
         public void onClick(View v) {
 
-            if (mVideoOnClickHandler != null) {
-                mVideoOnClickHandler.onClick(mMovieVideo);
+            if (videoOnClickHandler != null) {
+                videoOnClickHandler.onClick(movieVideo);
             }
 
         }
@@ -113,8 +113,8 @@ public class MovieVideosAdapter extends RecyclerView.Adapter<MovieVideosAdapter.
          */
         public void bind(MovieVideo movieVideo) {
 
-            mMovieVideo = movieVideo;
-            mNameTextView.setText(mMovieVideo.getName());
+            this.movieVideo = movieVideo;
+            movieName.setText(this.movieVideo.getName());
 
         }
     }

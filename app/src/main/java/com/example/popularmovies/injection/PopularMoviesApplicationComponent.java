@@ -17,5 +17,5 @@ public interface PopularMoviesApplicationComponent {
 
     void inject(MovieDetailsActivity activity);
 
-    void inject(MovieGridFragment grafment);
+    void inject(MovieGridFragment fragment);
 }

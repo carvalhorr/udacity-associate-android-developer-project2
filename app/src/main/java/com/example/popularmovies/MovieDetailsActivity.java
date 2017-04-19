@@ -53,13 +53,13 @@ public class MovieDetailsActivity
     public static final String MOVIE_ID_PARAM = "movie_id";
 
     // Declare data binding for the activity_movie_details.xml layout elements
-    private ActivityMovieDetailsBinding mBinding;
+    private ActivityMovieDetailsBinding binding;
 
     // MovieInfo received as parameter
-    private MovieInfo mMovieInfo = null;
+    private MovieInfo movieInfo = null;
 
     // MovieId received as parameter
-    private String mMovieId = null;
+    private String movieId = null;
 
     // Indicate if the movie is a favorite or not
     private boolean isFavorite = false;
@@ -67,11 +67,11 @@ public class MovieDetailsActivity
     // Indicate if finished loading the information if the movie is favorite from the ContentProvider
     private boolean isFavoriteLoaded = false;
 
-    private boolean mMovieInfoLoaded = false;
-    private boolean mVideosLoaded = false;
-    private boolean mReviewsLoaded = false;
+    private boolean movieInfoLoaded = false;
+    private boolean videosLoaded = false;
+    private boolean reviewsLoaded = false;
 
-    private InternetConnectionBroadcastReceiver mInternetConnectivityBroadcastReceiver;
+    private InternetConnectionBroadcastReceiver internetConnectivityBroadcastReceiver;
 
 
     @Override
@@ -85,7 +85,7 @@ public class MovieDetailsActivity
         setContentView(R.layout.activity_movie_details);
 
         // Bind the layout views
-        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_movie_details);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_movie_details);
 
         // Get the movieInfo or movieId passed as parameter
 
@@ -93,35 +93,35 @@ public class MovieDetailsActivity
         showLoader();
 
         getMovieInfoFromIntent();
-        if (mMovieInfo != null) {
+        if (movieInfo != null) {
 
             // If a movieInfo was received as parameter
-            mMovieId = mMovieInfo.getMovieId();
+            movieId = movieInfo.getMovieId();
         } else {
 
             // If only a movieId was passed as parameter
 
-            mMovieId = getIntent().getStringExtra(MOVIE_ID_PARAM);
+            movieId = getIntent().getStringExtra(MOVIE_ID_PARAM);
         }
         loadAndDisplayData();
     }
 
     private void loadAndDisplayData() {
-        if (mMovieInfo != null) {
+        if (movieInfo != null) {
 
             // Show the info on the user interface
-            movieInfoLoaded(mMovieInfo);
+            movieInfoLoaded(movieInfo);
         } else {
 
             // Load the movieInfo asynchronously from the internet
-            movieInfoTasks.retrieveMovieInfo(this, mMovieId, this);
+            movieInfoTasks.retrieveMovieInfo(this, movieId, this);
         }
 
         // Load the movie videos asynchronously from the internet
-        movieInfoTasks.retrieveMovieVideos(this, mMovieId, this);
+        movieInfoTasks.retrieveMovieVideos(this, movieId, this);
 
         // Load the movie reviews asynchronously from the internet
-        movieInfoTasks.retrieveMovieReviews(this, mMovieId, this);
+        movieInfoTasks.retrieveMovieReviews(this, movieId, this);
 
     }
 
@@ -130,7 +130,7 @@ public class MovieDetailsActivity
         super.onPause();
 
         // Stop listening to changes on connectivity status change when the fragment is paused
-        unregisterReceiver(mInternetConnectivityBroadcastReceiver);
+        unregisterReceiver(internetConnectivityBroadcastReceiver);
 
     }
 
@@ -143,10 +143,10 @@ public class MovieDetailsActivity
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
 
         // Create new broadcast receiver
-        mInternetConnectivityBroadcastReceiver = new InternetConnectionBroadcastReceiver();
+        internetConnectivityBroadcastReceiver = new InternetConnectionBroadcastReceiver();
 
         // Register the receiver to listen to changes on connectivity status
-        registerReceiver(mInternetConnectivityBroadcastReceiver, intentFilter);
+        registerReceiver(internetConnectivityBroadcastReceiver, intentFilter);
 
     }
 
@@ -165,57 +165,57 @@ public class MovieDetailsActivity
     private void getMovieInfoFromIntent() {
         Intent intent = getIntent();
         if (intent.hasExtra(MOVIE_INFO_INTENT_PARAM)) {
-            mMovieInfo = intent.getParcelableExtra(MOVIE_INFO_INTENT_PARAM);
+            movieInfo = intent.getParcelableExtra(MOVIE_INFO_INTENT_PARAM);
         }
     }
 
     // Display the movie info in the user interface
     private void showMovieDetails() {
 
-        if (mMovieInfo != null) {
-            mBinding.tvMovieTitle.setText(mMovieInfo.getTitle());
+        if (movieInfo != null) {
+            binding.tvMovieTitle.setText(movieInfo.getTitle());
 
-            if (mMovieInfo.getReleaseDate() != null) {
+            if (movieInfo.getReleaseDate() != null) {
                 SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-                mBinding.tvReleaseDate.setText(dateFormat.format(mMovieInfo.getReleaseDate()));
+                binding.tvReleaseDate.setText(dateFormat.format(movieInfo.getReleaseDate()));
 
             }
 
-            if (mMovieInfo.getVoteAverage() != null)
-                mBinding.tvVoteAverage.setText(mMovieInfo.getVoteAverage().toString() + " / 10");
+            if (movieInfo.getVoteAverage() != null)
+                binding.tvVoteAverage.setText(movieInfo.getVoteAverage().toString() + " / 10");
 
             Picasso.with(this)
-                    .load(PopularMoviesAPI.BASE_POSTER_PATH + "w780" + mMovieInfo.getPosterPath())
+                    .load(PopularMoviesAPI.BASE_POSTER_PATH + "w780" + movieInfo.getPosterPath())
                     .placeholder(R.drawable.poster)
                     .error(R.drawable.poster)
-                    .into(mBinding.ivMovieThumbnail);
+                    .into(binding.ivMovieThumbnail);
 
             Picasso.with(this)
-                    .load(PopularMoviesAPI.BASE_POSTER_PATH + "w780" + mMovieInfo.getBackdropPath())
+                    .load(PopularMoviesAPI.BASE_POSTER_PATH + "w780" + movieInfo.getBackdropPath())
                     .placeholder(R.drawable.backdrop)
                     .error(R.drawable.backdrop)
-                    .into(mBinding.ivBackdrop);
+                    .into(binding.ivBackdrop);
 
-            mBinding.tvMoviePlot.setText(mMovieInfo.getPlot());
+            binding.tvMoviePlot.setText(movieInfo.getPlot());
         }
 
     }
 
     private void showLoader() {
-        mBinding.pbLoadingIndicator.setVisibility(View.VISIBLE);
+        binding.pbLoadingIndicator.setVisibility(View.VISIBLE);
     }
 
     private void hideLoader() {
-        if (mMovieInfoLoaded && mVideosLoaded && mReviewsLoaded)
-            mBinding.pbLoadingIndicator.setVisibility(View.INVISIBLE);
+        if (movieInfoLoaded && videosLoaded && reviewsLoaded)
+            binding.pbLoadingIndicator.setVisibility(View.INVISIBLE);
     }
 
     private void showError() {
-        mBinding.tvErrorMessage.setVisibility(View.VISIBLE);
+        binding.tvErrorMessage.setVisibility(View.VISIBLE);
     }
 
     private void hideError() {
-        mBinding.tvErrorMessage.setVisibility(View.INVISIBLE);
+        binding.tvErrorMessage.setVisibility(View.INVISIBLE);
     }
 
     /**
@@ -225,9 +225,9 @@ public class MovieDetailsActivity
     private void showFavorite() {
 
         if (isFavorite) {
-            mBinding.floatingActionButton.setImageResource(android.R.drawable.btn_star_big_on);
+            binding.floatingActionButton.setImageResource(android.R.drawable.btn_star_big_on);
         } else {
-            mBinding.floatingActionButton.setImageResource(android.R.drawable.btn_star_big_off);
+            binding.floatingActionButton.setImageResource(android.R.drawable.btn_star_big_off);
         }
 
     }
@@ -240,9 +240,9 @@ public class MovieDetailsActivity
 
         if (isFavoriteLoaded) {
             if (!isFavorite) {
-                FavoriteTasks.addToFavoriteTask(this, mMovieInfo, this);
+                FavoriteTasks.addToFavoriteTask(this, movieInfo, this);
             } else {
-                FavoriteTasks.removeFromFavoriteTask(this, mMovieInfo.getMovieId(), this);
+                FavoriteTasks.removeFromFavoriteTask(this, movieInfo.getMovieId(), this);
             }
         }
 
@@ -301,7 +301,7 @@ public class MovieDetailsActivity
     @Override
     public void movieInfoLoaded(MovieInfo movieInfo) {
 
-        mMovieInfoLoaded = true;
+        movieInfoLoaded = true;
 
         if (movieInfo == null) {
 
@@ -310,10 +310,10 @@ public class MovieDetailsActivity
         } else {
 
             // Save the movieInfo information received
-            mMovieInfo = movieInfo;
+            this.movieInfo = movieInfo;
 
             // Check if the movie is favorite
-            FavoriteTasks.isFavorite(this, mMovieInfo.getMovieId(), this);
+            FavoriteTasks.isFavorite(this, this.movieInfo.getMovieId(), this);
             hideLoader();
             hideError();
 
@@ -335,11 +335,11 @@ public class MovieDetailsActivity
         LinearLayoutManager movieGridLayoutManager =
                 new LinearLayoutManager(this, GridLayoutManager.HORIZONTAL, false);
         movieGridLayoutManager.setAutoMeasureEnabled(true);
-        mBinding.rvVideos.setLayoutManager(movieGridLayoutManager);
-        mBinding.rvVideos.setAdapter(adapter);
+        binding.rvVideos.setLayoutManager(movieGridLayoutManager);
+        binding.rvVideos.setAdapter(adapter);
         adapter.setMovieInfoData(videos);
 
-        mVideosLoaded = true;
+        videosLoaded = true;
         hideLoader();
 
     }
@@ -355,11 +355,11 @@ public class MovieDetailsActivity
         MovieReviewsAdapter adapter = new MovieReviewsAdapter(this);
         LinearLayoutManager reviewLayoutManager =
                 new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        mBinding.rvReviews.setLayoutManager(reviewLayoutManager);
-        mBinding.rvReviews.setAdapter(adapter);
+        binding.rvReviews.setLayoutManager(reviewLayoutManager);
+        binding.rvReviews.setAdapter(adapter);
         adapter.setMovieReviews(reviews);
 
-        mReviewsLoaded = true;
+        reviewsLoaded = true;
         hideLoader();
 
     }

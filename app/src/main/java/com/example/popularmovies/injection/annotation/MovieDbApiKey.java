@@ -8,6 +8,8 @@ import java.lang.annotation.Target;
 import javax.inject.Named;
 
 /**
+ * Annotation to identify the movie DB api key to be injected. Since it is a String, this annotation
+ * tells Dagger2 which string to use.
  * Created by carvalhorr on 4/18/17.
  */
 

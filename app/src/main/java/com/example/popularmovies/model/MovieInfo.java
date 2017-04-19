@@ -18,27 +18,27 @@ public class MovieInfo implements Parcelable {
 
     // Movie id
     @SerializedName("id")
-    private String mMovieId;
+    private String movieId;
 
     // Movie title
     @SerializedName("title")
-    private String mTitle;
+    private String title;
 
     // Name of the file for the movie poster
     @SerializedName("poster_path")
-    private String mPosterPath;
+    private String posterPath;
 
     // Name of the backdrop image for the movie
     @SerializedName("backdrop_path")
-    private String mBackdropPath;
+    private String backdropPath;
 
     // Movie release date
     @SerializedName("release_date")
-    private Date mReleaseDate;
+    private Date releaseDate;
 
     // Vote average for the movie
     @SerializedName("vote_average")
-    private Double mVoteAverage;
+    private Double voteAverage;
 
     // Movie plot
     @SerializedName("overview")
@@ -48,13 +48,13 @@ public class MovieInfo implements Parcelable {
     }
 
     protected MovieInfo(Parcel in) {
-        mMovieId = in.readString();
-        mTitle = in.readString();
-        mPosterPath = in.readString();
-        mBackdropPath = in.readString();
+        movieId = in.readString();
+        title = in.readString();
+        posterPath = in.readString();
+        backdropPath = in.readString();
         mPlot = in.readString();
-        mReleaseDate = new Date(in.readLong());
-        mVoteAverage = in.readDouble();
+        releaseDate = new Date(in.readLong());
+        voteAverage = in.readDouble();
     }
 
     public static final Creator<MovieInfo> CREATOR = new Creator<MovieInfo>() {
@@ -70,51 +70,51 @@ public class MovieInfo implements Parcelable {
     };
 
     public String getMovieId() {
-        return mMovieId;
+        return movieId;
     }
 
     public void setMovieId(String mMovieId) {
-        this.mMovieId = mMovieId;
+        this.movieId = mMovieId;
     }
 
     public String getTitle() {
-        return mTitle;
+        return title;
     }
 
     public void setTitle(String mTitle) {
-        this.mTitle = mTitle;
+        this.title = mTitle;
     }
 
     public String getPosterPath() {
-        return mPosterPath;
+        return posterPath;
     }
 
     public void setPosterPath(String mPosterPath) {
-        this.mPosterPath = mPosterPath;
+        this.posterPath = mPosterPath;
     }
 
     public String getBackdropPath() {
-        return mBackdropPath;
+        return backdropPath;
     }
 
     public void setBackdropPath(String backdropPath) {
-        this.mBackdropPath = backdropPath;
+        this.backdropPath = backdropPath;
     }
 
     public Date getReleaseDate() {
-        return mReleaseDate;
+        return releaseDate;
     }
 
     public void setReleaseDate(Date mReleaseDate) {
-        this.mReleaseDate = mReleaseDate;
+        this.releaseDate = mReleaseDate;
     }
 
     public Double getVoteAverage() {
-        return mVoteAverage;
+        return voteAverage;
     }
 
     public void setVoteAverage(Double mVoteAverage) {
-        this.mVoteAverage = mVoteAverage;
+        this.voteAverage = mVoteAverage;
     }
 
     public String getPlot() {
@@ -132,12 +132,12 @@ public class MovieInfo implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(mMovieId);
-        dest.writeString(mTitle);
-        dest.writeString(mPosterPath);
-        dest.writeString(mBackdropPath);
+        dest.writeString(movieId);
+        dest.writeString(title);
+        dest.writeString(posterPath);
+        dest.writeString(backdropPath);
         dest.writeString(mPlot);
-        dest.writeLong(mReleaseDate.getTime());
-        dest.writeDouble(mVoteAverage);
+        dest.writeLong(releaseDate.getTime());
+        dest.writeDouble(voteAverage);
     }
 }

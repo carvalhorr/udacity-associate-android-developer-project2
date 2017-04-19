@@ -23,11 +23,11 @@ public class MainActivity
         implements MovieListAdapter.MovieOnClickHandler {
 
     // Declare variables for the view elements.
-    private ViewPager mViewPager;
+    private ViewPager viewPager;
     private TabLayout tabLayout;
 
     // Declare variable for the pager adapter.
-    private SectionsPagerAdapter mSectionsPagerAdapter;
+    private SectionsPagerAdapter sectionsPagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,16 +41,16 @@ public class MainActivity
         setSupportActionBar(toolbar);
 
         // Create instance of the pager adapter.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(
+        sectionsPagerAdapter = new SectionsPagerAdapter(
                 getSupportFragmentManager());
 
         // Ge reference to the view pager and hook the pager adapter to it
-        mViewPager = (ViewPager) findViewById(R.id.container);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
+        viewPager = (ViewPager) findViewById(R.id.container);
+        viewPager.setAdapter(sectionsPagerAdapter);
 
         // Get a reference to the tabs section and set it up
         tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(mViewPager);
+        tabLayout.setupWithViewPager(viewPager);
 
     }
 

@@ -16,49 +16,49 @@ public class MovieInfoPageResponse {
 
     // Number of the page returned
     @SerializedName("page")
-    private Integer mPageNumber;
+    private Integer pageNumber;
 
     // List of movies
     @SerializedName("results")
-    private List<MovieInfo> mMovieInfoList;
+    private List<MovieInfo> movieInfoList;
 
     // Total number of movies in the corresponding category (popular or top rated)
     @SerializedName("total_results")
-    private Integer mTotalResults;
+    private Integer totalResults;
 
     // Total number of pages in the corresponding category (popular or top rated)
     @SerializedName("total_pages")
-    private Integer mTotalPages;
+    private Integer totalPages;
 
     public Integer getPageNumber() {
-        return mPageNumber;
+        return pageNumber;
     }
 
     public void setPageNumber(Integer mPageNumber) {
-        this.mPageNumber = mPageNumber;
+        this.pageNumber = mPageNumber;
     }
 
     public List<MovieInfo> getMovieInfoList() {
-        return mMovieInfoList;
+        return movieInfoList;
     }
 
     public void setMovieInfoList(List<MovieInfo> mMovieInfoList) {
-        this.mMovieInfoList = mMovieInfoList;
+        this.movieInfoList = mMovieInfoList;
     }
 
     public Integer getTotalResults() {
-        return mTotalResults;
+        return totalResults;
     }
 
     public void setTotalResults(Integer mTotalResults) {
-        this.mTotalResults = mTotalResults;
+        this.totalResults = mTotalResults;
     }
 
     public Integer getTotalPages() {
-        return mTotalPages;
+        return totalPages;
     }
 
     public void setTotalPages(Integer mTotalPages) {
-        this.mTotalPages = mTotalPages;
+        this.totalPages = mTotalPages;
     }
 }

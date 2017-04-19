@@ -22,20 +22,20 @@ import java.util.List;
 public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.PopularMoviesViewholder> {
 
     // Holds the list of videos.
-    private List<MovieInfo> mMovieInfoData;
+    private List<MovieInfo> movieInfoData;
 
     // Holds a reference to an external movie click handler
-    private final MovieOnClickHandler mMovieOnClickHandler;
+    private final MovieOnClickHandler movieOnClickHandler;
 
     // Indicate whether the adapter holds a list of favorite movies or not. Each MovieInfo in the
     // list of favorites do not contain all the movie info, therefore a different call is made in
     // the external click handler.
-    private boolean mFavorites;
+    private boolean favorites;
 
     public MovieListAdapter(MovieOnClickHandler movieOnClickHandler, boolean favorites) {
 
-        this.mMovieOnClickHandler = movieOnClickHandler;
-        this.mFavorites = favorites;
+        this.movieOnClickHandler = movieOnClickHandler;
+        this.favorites = favorites;
 
     }
 
@@ -57,7 +57,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Popu
     @Override
     public void onBindViewHolder(PopularMoviesViewholder holder, int position) {
 
-        MovieInfo movieInfo = mMovieInfoData.get(position);
+        MovieInfo movieInfo = movieInfoData.get(position);
         holder.bind(movieInfo);
 
     }
@@ -65,8 +65,8 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Popu
     @Override
     public int getItemCount() {
 
-        if (mMovieInfoData == null) return 0;
-        return mMovieInfoData.size();
+        if (movieInfoData == null) return 0;
+        return movieInfoData.size();
 
     }
 
@@ -77,7 +77,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Popu
      */
     public void setMovieInfoData(List<MovieInfo> movieInfoData) {
 
-        this.mMovieInfoData = movieInfoData;
+        this.movieInfoData = movieInfoData;
         notifyDataSetChanged();
 
     }
@@ -87,14 +87,14 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Popu
             implements View.OnClickListener {
 
         // Declare variables for the view elements
-        private MovieInfo mMovieInfo;
-        private ImageView mMovieThumbnailImageView;
+        private MovieInfo movieInfo;
+        private ImageView movieThumbnailImageView;
 
         public PopularMoviesViewholder(View itemView) {
             super(itemView);
 
             // Get reference to the movie poster image view
-            mMovieThumbnailImageView =
+            movieThumbnailImageView =
                     (ImageView) itemView.findViewById(R.id.iv_movie_thumbnail);
 
             // set the click handler for the movie item
@@ -110,11 +110,11 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Popu
         @Override
         public void onClick(View v) {
 
-            if (mMovieOnClickHandler != null) {
-                if (mFavorites) {
-                    mMovieOnClickHandler.onClick(mMovieInfo.getMovieId());
+            if (movieOnClickHandler != null) {
+                if (favorites) {
+                    movieOnClickHandler.onClick(movieInfo.getMovieId());
                 } else {
-                    mMovieOnClickHandler.onClick(mMovieInfo);
+                    movieOnClickHandler.onClick(movieInfo);
                 }
             }
 
@@ -126,12 +126,12 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Popu
          * @param movieInfo
          */
         public void bind(MovieInfo movieInfo) {
-            mMovieInfo = movieInfo;
-            Picasso.with(mMovieThumbnailImageView.getContext())
-                    .load(PopularMoviesAPI.BASE_POSTER_PATH + "w780" + mMovieInfo.getPosterPath())
+            this.movieInfo = movieInfo;
+            Picasso.with(movieThumbnailImageView.getContext())
+                    .load(PopularMoviesAPI.BASE_POSTER_PATH + "w780" + this.movieInfo.getPosterPath())
                     .placeholder(R.drawable.poster)
                     .error(R.drawable.poster)
-                    .into(mMovieThumbnailImageView);
+                    .into(movieThumbnailImageView);
         }
     }
 
