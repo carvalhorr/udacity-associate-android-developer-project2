@@ -88,11 +88,14 @@ public class MovieGridFragment
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Bundle bundle = getArguments();
+
+        PopularMoviesApplication.get(getContext()).getComponent().inject(this);
+
         if (getActivity() instanceof MovieListAdapter.MovieOnClickHandler) {
             movieOnClickHandler = (MovieListAdapter.MovieOnClickHandler) getActivity();
-            ((PopularMoviesApplication) getActivity().getApplication()).getComponent().inject(this);
         }
+
+        Bundle bundle = getArguments();
         if (bundle != null && bundle.containsKey(PARAM_QUERY_TYPE)) {
             queryType = bundle.getInt(PARAM_QUERY_TYPE);
             setupMovieGridRecyclerView();

@@ -44,7 +44,7 @@ public class FavoriteMoviesContentProvider extends ContentProvider {
 
     private FavoriteMoviesDatabaseManager getDatabaseManager() {
         if (databaseManager == null) {
-            ((PopularMoviesApplication) getContext().getApplicationContext()).getComponent().inject(this);
+            PopularMoviesApplication.get(getContext()).getComponent().inject(this);
         }
         return databaseManager;
     }

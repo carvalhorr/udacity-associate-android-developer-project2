@@ -82,7 +82,7 @@ public class MovieDetailsActivity
         super.onCreate(savedInstanceState);
 
         // Inject dependencies
-        ((PopularMoviesApplication) getApplication()).getComponent().inject(this);
+        PopularMoviesApplication.get(this).getComponent().inject(this);
 
         // Load activity layout
         setContentView(R.layout.activity_movie_details);
