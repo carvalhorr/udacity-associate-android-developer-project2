@@ -10,6 +10,7 @@ import com.example.popularmovies.injection.annotation.MovieDbApiKey;
 import com.example.popularmovies.network.PopularMoviesAPI;
 import com.example.popularmovies.task.FavoriteTasks;
 import com.example.popularmovies.task.MovieInfoTasks;
+import com.example.popularmovies.task.MovieListAsyncTaskFactory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -25,7 +26,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 @Module
 public class PopularMoviesInjectionModule {
-
 
     private Context context;
 
@@ -81,6 +81,13 @@ public class PopularMoviesInjectionModule {
                 .build();
 
         return retrofit.create(PopularMoviesAPI.class);
+    }
+
+
+    @Provides
+    @Singleton
+    public MovieListAsyncTaskFactory provideMovieListAsyncTaskFactory(PopularMoviesController popularMoviesController, FavoriteController favoriteController) {
+        return new MovieListAsyncTaskFactory(context, popularMoviesController, favoriteController);
     }
 
     @Provides

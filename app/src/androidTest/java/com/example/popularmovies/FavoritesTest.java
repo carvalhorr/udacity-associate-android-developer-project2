@@ -36,7 +36,7 @@ public class FavoritesTest {
             MainActivity.class);
 
     @Test
-    public void whenUserClickOnAPopularMovieThenDetailsAcitivityisDisplayed() throws InterruptedException {
+    public void whenUserAddsAMovieToFavoriteItIsAddedToListOfFavorites() throws InterruptedException {
 
         // click on first movie
         onView(allOf(
@@ -49,4 +49,6 @@ public class FavoritesTest {
         //intended(IntentMatchers.hasComponent(MovieDetailsActivity.class.getName()));
 
     }
+
+
 }

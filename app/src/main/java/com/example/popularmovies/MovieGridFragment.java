@@ -24,6 +24,8 @@ import com.example.popularmovies.control.FavoriteController;
 import com.example.popularmovies.control.PopularMoviesController;
 import com.example.popularmovies.injection.PopularMoviesApplication;
 import com.example.popularmovies.model.MovieInfo;
+import com.example.popularmovies.task.MovieListAsyncTask;
+import com.example.popularmovies.task.MovieListAsyncTaskFactory;
 
 import java.io.IOException;
 import java.util.List;
@@ -65,10 +67,7 @@ public class MovieGridFragment
     private InternetConnectionBroadcastReceiver internetConnectivityBroadcastReceiver;
 
     @Inject
-    public PopularMoviesController popularMoviesController;
-
-    @Inject
-    public FavoriteController favoritesController;
+    public MovieListAsyncTaskFactory movieListAsyncTaskFactory;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -89,8 +88,6 @@ public class MovieGridFragment
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        PopularMoviesApplication.get(getContext()).getComponent().inject(this);
-
         if (getActivity() instanceof MovieListAdapter.MovieOnClickHandler) {
             movieOnClickHandler = (MovieListAdapter.MovieOnClickHandler) getActivity();
         }
@@ -100,6 +97,9 @@ public class MovieGridFragment
             queryType = bundle.getInt(PARAM_QUERY_TYPE);
             setupMovieGridRecyclerView();
         }
+
+        PopularMoviesApplication.get(getContext()).getComponent().inject(this);
+
     }
 
     @Override
@@ -122,15 +122,15 @@ public class MovieGridFragment
 
     @Override
     public void onPause() {
-        super.onPause();
 
+        super.onPause();
         // Stop listening to changes on connectivity status change when the fragment is paused
         getActivity().unregisterReceiver(internetConnectivityBroadcastReceiver);
     }
 
     private void setupMovieGridRecyclerView() {
-        int spanCount = getResources().getInteger(R.integer.column_count);
         boolean reverseLayout = false;
+        int spanCount = getResources().getInteger(R.integer.column_count);
 
         GridLayoutManager movieGridLayoutManager =
                 new GridLayoutManager(getContext(), spanCount, GridLayoutManager.VERTICAL, reverseLayout);
@@ -144,41 +144,7 @@ public class MovieGridFragment
 
     @Override
     public Loader<List<MovieInfo>> onCreateLoader(final int id, final Bundle args) {
-        return new AsyncTaskLoader<List<MovieInfo>>(getContext()) {
-
-            @Override
-            protected void onStartLoading() {
-                if (args == null) {
-                    return;
-                }
-                forceLoad();
-            }
-
-            @Override
-            public List<MovieInfo> loadInBackground() {
-                //PopularMoviesController controller = new PopularMoviesController(MOVIE_DB_API_KEY);
-                List<MovieInfo> listMovies = null;
-                try {
-                    switch (queryType) {
-                        case POPULAR_MOVIE_LOADER: {
-                            listMovies = popularMoviesController.getPopularMovies();
-                            break;
-                        }
-                        case TOP_RATED_MOVIE_LOADER: {
-                            listMovies = popularMoviesController.getTopRatedMovies();
-                            break;
-                        }
-                        case FAVORITE_MOVIE_LOADER: {
-                            listMovies = favoritesController.getFavorites(getContext());
-                            break;
-                        }
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return listMovies;
-            }
-        };
+        return movieListAsyncTaskFactory.getMovieListAsyncTask(id);
     }
 
     @Override
