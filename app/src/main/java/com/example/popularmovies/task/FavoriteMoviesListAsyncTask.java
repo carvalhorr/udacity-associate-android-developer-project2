@@ -15,12 +15,12 @@ import javax.inject.Inject;
  * Created by carvalhorr on 4/21/17.
  */
 
-public class FavoriteMoviesListAsynTask extends MovieListAsyncTask {
+public class FavoriteMoviesListAsyncTask extends MovieListAsyncTask {
 
     private FavoriteController favoriteController;
 
     @Inject
-    public FavoriteMoviesListAsynTask(Context context, FavoriteController favoriteController) {
+    public FavoriteMoviesListAsyncTask(Context context, FavoriteController favoriteController) {
         super(context);
         this.favoriteController = favoriteController;
     }

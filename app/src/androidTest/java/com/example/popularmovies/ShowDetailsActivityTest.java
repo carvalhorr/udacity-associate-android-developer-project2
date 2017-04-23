@@ -3,6 +3,8 @@ package com.example.popularmovies;
 import android.app.Activity;
 import android.app.Application;
 import android.content.ContentResolver;
+import android.content.Context;
+import android.content.Intent;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.Espresso;
 import android.support.test.espresso.assertion.ViewAssertions;
@@ -15,8 +17,12 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 
+import com.example.popularmovies.injection.DaggerPopularMoviesApplicationComponent;
+import com.example.popularmovies.injection.MockPopularMoviesInjectionModule;
 import com.example.popularmovies.injection.PopularMoviesApplication;
+import com.example.popularmovies.injection.PopularMoviesApplicationComponent;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -43,8 +49,23 @@ public class ShowDetailsActivityTest {
 
     @Rule
     public ActivityTestRule<MainActivity> mainActivityTestRule = new ActivityTestRule<MainActivity>(
-            MainActivity.class);
+            MainActivity.class, false, false);
 
+
+    @Before
+    public void startActivityWithMockData() {
+
+        PopularMoviesApplication app = (PopularMoviesApplication) InstrumentationRegistry.getInstrumentation().getTargetContext().getApplicationContext();
+
+        PopularMoviesApplicationComponent componentWithOverride = DaggerPopularMoviesApplicationComponent.builder()
+                .popularMoviesInjectionModule(new MockPopularMoviesInjectionModule(InstrumentationRegistry.getInstrumentation().getTargetContext()))
+                .build();
+
+        app.setComponent(componentWithOverride);
+
+        mainActivityTestRule.launchActivity(null);
+
+    }
 
     @Test
     public void whenUserClickOnAPopularMovieThenDetailsAcitivityIsDisplayed() throws InterruptedException {
@@ -77,11 +98,5 @@ public class ShowDetailsActivityTest {
 
     }
 
-    public class TestPopularMoviesApplication extends PopularMoviesApplication {
 
-        @Override
-        public ContentResolver getContentResolver() {
-            return super.getContentResolver();
-        }
-    }
 }

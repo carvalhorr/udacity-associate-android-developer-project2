@@ -14,12 +14,12 @@ import javax.inject.Inject;
  * Created by carvalhorr on 4/21/17.
  */
 
-public class PopularMoviesListAsynTask extends MovieListAsyncTask {
+public class PopularMoviesListAsyncTask extends MovieListAsyncTask {
 
     private PopularMoviesController popularMobviesController;
 
     @Inject
-    public PopularMoviesListAsynTask(Context context, PopularMoviesController popularMoviesController) {
+    public PopularMoviesListAsyncTask(Context context, PopularMoviesController popularMoviesController) {
         super(context);
         this.popularMobviesController = popularMoviesController;
     }

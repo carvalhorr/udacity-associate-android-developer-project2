@@ -172,11 +172,8 @@ public class MovieGridFragment
             LoaderManager loaderManager = getActivity().getSupportLoaderManager();
             Loader<String> movieDbLoader = loaderManager.getLoader(loader);
 
-            if (movieDbLoader == null) {
-                loaderManager.initLoader(loader, bundle, this);
-            } else {
-                loaderManager.restartLoader(loader, bundle, this);
-            }
+            loaderManager.initLoader(loader, bundle, this);
+
         } else {
             showError();
         }

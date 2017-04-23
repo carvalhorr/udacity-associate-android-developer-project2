@@ -27,7 +27,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 @Module
 public class PopularMoviesInjectionModule {
 
-    private Context context;
+    protected Context context;
 
     public PopularMoviesInjectionModule(Context context) {
         this.context = context;

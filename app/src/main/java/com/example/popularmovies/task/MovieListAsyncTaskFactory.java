@@ -32,7 +32,7 @@ public class MovieListAsyncTaskFactory {
         MovieListAsyncTask movieListAsyncTask = null;
         switch (queryType) {
             case POPULAR_MOVIE_LOADER: {
-                movieListAsyncTask = new PopularMoviesListAsynTask(context, popularMoviesController);
+                movieListAsyncTask = new PopularMoviesListAsyncTask(context, popularMoviesController);
                 break;
             }
             case TOP_RATED_MOVIE_LOADER: {
@@ -40,7 +40,7 @@ public class MovieListAsyncTaskFactory {
                 break;
             }
             case FAVORITE_MOVIE_LOADER: {
-                movieListAsyncTask = new FavoriteMoviesListAsynTask(context, favoriteController);
+                movieListAsyncTask = new FavoriteMoviesListAsyncTask(context, favoriteController);
                 break;
             }
         }

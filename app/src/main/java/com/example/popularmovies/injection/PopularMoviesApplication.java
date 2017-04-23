@@ -28,4 +28,8 @@ public class PopularMoviesApplication extends Application {
     public PopularMoviesApplicationComponent getComponent() {
         return component;
     }
+
+    public void setComponent(PopularMoviesApplicationComponent component) {
+        this.component = component;
+    }
 }
