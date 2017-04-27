@@ -6,6 +6,8 @@ import com.example.popularmovies.control.FavoriteController;
 import com.example.popularmovies.model.MovieInfo;
 import com.example.popularmovies.task.FavoriteMoviesListAsyncTask;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -23,7 +25,18 @@ public class MockFavoriteMoviesListAsyncTask extends FavoriteMoviesListAsyncTask
     }
 
     private List<MovieInfo> createMockFavoriteMoviesList() {
-        return  null;
+        List<MovieInfo> movies = new ArrayList<MovieInfo>();
+        MovieInfo mi = new MovieInfo();
+        mi.setMovieId("1");
+        mi.setTitle("A top rated movie title");
+        mi.setPosterPath("path.png");
+        mi.setBackdropPath("backdrop.png");
+        mi.setPlot("Blah");
+        mi.setReleaseDate(new Date());
+        mi.setVoteAverage(10d);
+        movies.add(mi);
+        return movies;
+
     }
 
 }

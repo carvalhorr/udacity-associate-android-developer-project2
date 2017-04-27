@@ -11,6 +11,8 @@ import com.example.popularmovies.task.MovieListAsyncTaskFactory;
 import com.example.popularmovies.task.PopularMoviesListAsyncTask;
 import com.example.popularmovies.task.TopRatedMoviesListAsyncTask;
 
+import java.io.IOException;
+
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
@@ -23,8 +25,11 @@ import static org.mockito.Mockito.when;
 
 public class MockPopularMoviesInjectionModule extends PopularMoviesInjectionModule {
 
+    private FavoriteMoviesListAsyncTask favoriteMoviesMovieAsyncTask;
+
     public MockPopularMoviesInjectionModule(Context context) {
         super(context);
+        favoriteMoviesMovieAsyncTask = new MockFavoriteMoviesListAsyncTask(context, null);
     }
 
     @Override
@@ -38,7 +43,6 @@ public class MockPopularMoviesInjectionModule extends PopularMoviesInjectionModu
         TopRatedMoviesListAsyncTask topRatedMoviesAsynktask = new MockTopRatedMoviesListAsyncTask(context, null);
         when(mockFactory.getMovieListAsyncTask(2)).thenReturn(topRatedMoviesAsynktask);
 
-        FavoriteMoviesListAsyncTask favoriteMoviesMovieAsyncTask = new MockFavoriteMoviesListAsyncTask(context, null);
         when(mockFactory.getMovieListAsyncTask(3)).thenReturn(favoriteMoviesMovieAsyncTask);
 
         return mockFactory;
@@ -55,7 +59,12 @@ public class MockPopularMoviesInjectionModule extends PopularMoviesInjectionModu
     @Override
     public PopularMoviesController providesMovieController(PopularMoviesAPI api, @MovieDbApiKey String movieDbApi) {
         PopularMoviesController popularMoviesController = mock(PopularMoviesController.class);
-        return super.providesMovieController(api, movieDbApi);
+        try {
+            when(popularMoviesController.getMovieInfo(any(String.class))).thenReturn(favoriteMoviesMovieAsyncTask.loadInBackground().get(0));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return popularMoviesController;
     }
 
 }

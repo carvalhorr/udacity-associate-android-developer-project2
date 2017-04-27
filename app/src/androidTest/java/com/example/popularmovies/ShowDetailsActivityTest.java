@@ -85,11 +85,26 @@ public class ShowDetailsActivityTest {
         clickOnMovieAndVerifyDetailsIsDisplayed();
     }
 
+    @Test
+    public void whenUserClickOnFavoriteMovieThenDetailsActivityIsDisplayed() throws InterruptedException {
+
+        onView(withId(R.id.container)).perform(swipeLeft());
+
+        onView(withId(R.id.container)).perform(swipeLeft());
+
+        // Find a way to make espresso wait for swipe
+        Thread.sleep(200);
+
+        clickOnMovieAndVerifyDetailsIsDisplayed();
+
+    }
+
     private void clickOnMovieAndVerifyDetailsIsDisplayed() {
         // click on first movie
         onView(allOf(allOf(isDisplayed(), withId(R.id.rv_movies_grid))))
                 .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
 
+        onView(withId(R.id.tv_error_message)).check(ViewAssertions.matches(withEffectiveVisibility(Visibility.INVISIBLE)));
 
         // make sure details acitivty is displayed
         onView(withId(R.id.floatingActionButton)).check(ViewAssertions.matches(isDisplayed()));
