@@ -1,5 +1,5 @@
 # About
-This project was developed as part of the Udacity Associate Android Developer Fast Track nanodegree. The app displays popular and best rated movies obtained from [The Movie DB] (https://www.themoviedb.org) through its RESTful API. Intructions on how to setup the a api key can be found below
+This project was developed as part of the Udacity Associate Android Developer Fast Track nanodegree. The app displays popular and best rated movies obtained from [The Movie DB](https://www.themoviedb.org) through its RESTful API. Intructions on how to setup the a api key can be found below
 
 After the project was submitted and graded by Udacity it is used as a learning project where new techniques are continually included. The extra techniques and libraries include:
 - [Dagger2](https://google.github.io/dagger/)
